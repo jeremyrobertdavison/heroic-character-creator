@@ -69,3 +69,28 @@ test('Jeremy allocation writes positive starting Focus at Vigilance zero',async(
  setup();const b=newBuild();b.abilities.melee=2;b.abilities.resilience=3;b.acknowledge=true;const r=await commit(b,null,null);
  assert.equal(r.actor.system.lifepool.focus.max,10);assert.equal(r.actor.system.lifepool.focus.value,10);assert.equal(r.actor.system.lifepool.health.max,90);
 });
+
+function storedFolder(id,flags={},type='Actor'){
+ return {id,type,flags,getFlag(scope,key){
+  if(scope!==ID)throw new Error(`Flag scope "${scope}" is not valid or not currently active`);
+  return this.flags?.[scope]?.[key];
+ }};
+}
+for(const legacy of [false,true])test(`editing with unrelated folders reuses ${legacy?'legacy':'current'} recovery folder without inactive flag lookups`,async()=>{
+ setup();const scope=legacy?'mvrpg-character-creator':ID;
+ game.folders=[storedFolder('ordinary'),storedFolder('recovery',{[scope]:{recovery:true}})];
+ globalThis.Folder.create=async()=>{throw new Error('Should reuse existing recovery folder');};
+ const a=new FakeActor(fixture()),b=ready(a);b.name='Edited hero';
+ const r=await commit(b,a,fingerprint(a));
+ assert.equal(a.name,'Edited hero');assert.equal(r.backup.toObject().folder,'recovery');
+ assert.ok(a.toObject().flags[ID].build);
+});
+test('editing with ordinary folders creates a recovery folder under the active module scope',async()=>{
+ setup();game.folders=[storedFolder('ordinary'),storedFolder('journal',{[ID]:{recovery:true}},'JournalEntry')];
+ let folderData;
+ globalThis.Folder.create=async data=>{folderData=clone(data);return {id:'new-recovery'};};
+ const a=new FakeActor(fixture()),b=ready(a);b.name='Edited hero';
+ const r=await commit(b,a,fingerprint(a));
+ assert.deepEqual(folderData.flags,{[ID]:{recovery:true}});
+ assert.equal(r.backup.toObject().folder,'new-recovery');assert.equal(a.name,'Edited hero');
+});

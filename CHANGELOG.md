@@ -1,3 +1,9 @@
+# 0.3.1 — Existing-character save fix
+
+- Fixed an inactive legacy flag-scope error when looking up the recovery folder before saving character edits or updating included content.
+- Preserved reuse of recovery folders created under either module name, without requiring the retired module to be installed or active.
+- Added three regression tests covering ordinary folders and current/legacy recovery folders. All 105 automated tests pass; live Foundry verification remains required.
+
 # 0.3.0 — Core catalogue expansion
 
 - Expanded to 321 powers, 57 traits, 48 tags, 30 origins and 18 occupations, plus package-specific label variants.

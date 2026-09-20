@@ -78,3 +78,7 @@ If a save reports an incomplete operation, inspect the recovery copy before retr
 - Open Heroic Actions for a new reference-only power; verify Post rules to chat changes no Focus, Health or Active Effects.
 - Test an existing 0.2.0 character and an existing draft; verify original included powers still use their previous action workflows.
 - Attempt a 5-Focus action at 5 current Focus; verify it is rejected. At 6 Focus, verify it leaves 1.
+
+## 0.3.1 recovery-folder regression
+
+With only Heroic Character Creator enabled, create an ordinary Actor folder, then edit and save an existing character. Confirm a recovery copy is created and edits save without a flag-scope error. Repeat with an existing recovery folder; confirm it is reused. Older recovery folders carrying the retired module's stored recovery flag should also be reused without activating that module. The included-content update uses the same recovery path and should also complete.

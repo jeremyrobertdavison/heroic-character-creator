@@ -2,7 +2,7 @@
 
 A guided superhero character creator and editor for Foundry Virtual Tabletop 13.
 
-**Version 0.3.0** includes the core catalogue: **321 powers, 57 traits, 48 tags, 30 origins and 18 occupations**. It checks creation budgets, known prerequisites and package grants, and preserves existing Items during supported edits. Selected powers have GM-assisted automation; newly added entries provide rules references for manual gameplay resolution. See [catalogue coverage](docs/CORE-CATALOGUE.md).
+**Version 0.3.1** includes the core catalogue: **321 powers, 57 traits, 48 tags, 30 origins and 18 occupations**. It checks creation budgets, known prerequisites and package grants, and preserves existing Items during supported edits. Selected powers have GM-assisted automation; newly added entries provide rules references for manual gameplay resolution. See [catalogue coverage](docs/CORE-CATALOGUE.md).
 
 ## Requirements
 
@@ -114,7 +114,7 @@ Drafts are not world backups. Clearing browser data removes local drafts. Existi
 
 ## Safe editing and recovery
 
-Existing-character updates are GM-only in 0.3.0. Before writing, the module:
+Existing-character updates are GM-only in 0.3.1. Before writing, the module:
 
 1. Checks ownership, actor type, and source data for intervening changes.
 2. Creates a recovery Actor with no player ownership in **Character Creator — Recovery**.

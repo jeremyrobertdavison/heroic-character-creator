@@ -57,7 +57,8 @@ function ensurePermission(actor, copy) {
   if(actor?.isToken) throw new Error('Open the original character from the Actors directory, not an unlinked token.');
 }
 async function recoveryFolder() {
-  let folder=game.folders.find(f=>f.type==='Actor'&&(f.getFlag(ID,'recovery')||f.getFlag(LEGACY_ID,'recovery')));
+  // Read stored flags directly: getFlag rejects the retired module's inactive scope.
+  let folder=game.folders.find(f=>f.type==='Actor'&&(f.flags?.[ID]?.recovery||f.flags?.[LEGACY_ID]?.recovery));
   if(!folder) folder=await Folder.create({name:'Character Creator — Recovery',type:'Actor',flags:{[ID]:{recovery:true}}});
   return folder;
 }
