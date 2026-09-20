@@ -9,9 +9,9 @@ export const STARTER = [
     "minRank": 1,
     "requires": [],
     "trainingAllowed": true,
-    "reviewed": false,
-    "source": "Starter example; prerequisites transcribed from supplied Actor export; full PDF verification pending.",
-    "description": "Encourage an ally within hearing range, granting an edge on their action checks until your next turn. Standard action; one round.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 105 (supplied PDF).",
+    "description": "Power Set: None. Prerequisites: None. Action: Standard. Duration: 1 round. The character inspires an ally in earshot. The ally gains an edge on all action checks until the start of the character’s next turn.",
     "item": {
       "name": "Inspiration",
       "type": "power",
@@ -40,10 +40,12 @@ export const STARTER = [
           "edges": 0,
           "troubles": 0
         },
-        "description": "<p>Encourage an ally within hearing range, granting an edge on their action checks until your next turn. Standard action; one round.</p><p><em>Creator summary. Consult the core rulebook for complete wording and exceptions. Combat effects are not automated by this module.</em></p>"
+        "description": "<p><strong>Power Set:</strong> None</p><p><strong>Prerequisites:</strong> None</p><p><strong>Action:</strong> Standard</p><p><strong>Duration:</strong> 1 round</p><p>The character inspires an ally in earshot. The ally gains an edge on all action checks until the start of the character’s next turn.</p><p><em>Core Rulebook, p. 105 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> Applies a timed edge to Heroic Actions checks. The GM confirms hearing and action availability.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "Applies a timed edge to Heroic Actions checks. The GM confirms hearing and action availability.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:slow-motion-dodge",
@@ -55,9 +57,9 @@ export const STARTER = [
     "minRank": 1,
     "requires": [],
     "trainingAllowed": true,
-    "reviewed": false,
-    "source": "Starter example; prerequisites transcribed from supplied Actor export; full PDF verification pending.",
-    "description": "React to an attack against your Agility defense to give the attacker trouble on that attack.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 118 (supplied PDF).",
+    "description": "Power Set: None. Prerequisites: None. Action: Reaction. Trigger: An enemy makes an attack against the character’s Agility defense.. Duration: Instant. The enemy has trouble on the attack.",
     "item": {
       "name": "Slow-Motion Dodge",
       "type": "power",
@@ -86,10 +88,12 @@ export const STARTER = [
           "edges": 0,
           "troubles": 0
         },
-        "description": "<p>React to an attack against your Agility defense to give the attacker trouble on that attack.</p><p><em>Creator summary. Consult the core rulebook for complete wording and exceptions. Combat effects are not automated by this module.</em></p>"
+        "description": "<p><strong>Power Set:</strong> None</p><p><strong>Prerequisites:</strong> None</p><p><strong>Action:</strong> Reaction</p><p><strong>Trigger:</strong> An enemy makes an attack against the character’s Agility defense.</p><p><strong>Duration:</strong> Instant</p><p>The enemy has trouble on the attack.</p><p><em>Core Rulebook, p. 118 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> Adds trouble to a selected, unresolved native attack roll before rerolls. The GM confirms the trigger.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "Adds trouble to a selected, unresolved native attack roll before rerolls. The GM confirms the trigger.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:attack-stance",
@@ -101,9 +105,9 @@ export const STARTER = [
     "minRank": 1,
     "requires": [],
     "trainingAllowed": true,
-    "reviewed": false,
-    "source": "Starter example; prerequisites transcribed from supplied Actor export; full PDF verification pending.",
-    "description": "Maintain an offensive stance that doubles your Melee ability contribution to damage. Requires a standard action and concentration.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 83 (supplied PDF).",
+    "description": "Power Set: Martial Arts. Prerequisites: None. Action: Standard. Duration: Concentration. The character doubles their Melee ability bonus to damage.",
     "item": {
       "name": "Attack Stance",
       "type": "power",
@@ -132,10 +136,12 @@ export const STARTER = [
           "edges": 0,
           "troubles": 0
         },
-        "description": "<p>Maintain an offensive stance that doubles your Melee ability contribution to damage. Requires a standard action and concentration.</p><p><em>Creator summary. Consult the core rulebook for complete wording and exceptions. Combat effects are not automated by this module.</em></p>"
+        "description": "<p><strong>Power Set:</strong> Martial Arts</p><p><strong>Prerequisites:</strong> None</p><p><strong>Action:</strong> Standard</p><p><strong>Duration:</strong> Concentration</p><p>The character doubles their Melee ability bonus to damage.</p><p><em>Core Rulebook, p. 83 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> Applies a native Active Effect to Melee damage. End concentration using Heroic Actions.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "Applies a native Active Effect to Melee damage. End concentration using Heroic Actions.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:counterstrike-technique",
@@ -149,9 +155,9 @@ export const STARTER = [
       "starter:attack-stance"
     ],
     "trainingAllowed": true,
-    "reviewed": false,
-    "source": "Starter example; prerequisites transcribed from supplied Actor export; full PDF verification pending.",
-    "description": "While in Attack Stance, react to a damaging close attack by dealing half the attacker\u2019s regular damage back. Costs 5 Focus.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 90 (supplied PDF).",
+    "description": "Power Set: Martial Arts. Prerequisites: Attack Stance, Rank 2. Action: Reaction. Trigger: While Attack Stance is active, a close attack against the character does damage.. Duration: Instant. Cost: 5 Focus. The character deals half the attacker’s regular damage to the attacker.",
     "item": {
       "name": "Counterstrike Technique",
       "type": "power",
@@ -180,10 +186,12 @@ export const STARTER = [
           "edges": 0,
           "troubles": 0
         },
-        "description": "<p>While in Attack Stance, react to a damaging close attack by dealing half the attacker\u2019s regular damage back. Costs 5 Focus.</p><p><em>Creator summary. Consult the core rulebook for complete wording and exceptions. Combat effects are not automated by this module.</em></p>"
+        "description": "<p><strong>Power Set:</strong> Martial Arts</p><p><strong>Prerequisites:</strong> Attack Stance, Rank 2</p><p><strong>Action:</strong> Reaction</p><p><strong>Trigger:</strong> While Attack Stance is active, a close attack against the character does damage.</p><p><strong>Duration:</strong> Instant</p><p><strong>Cost:</strong> 5 Focus</p><p>The character deals half the attacker’s regular damage to the attacker.</p><p><em>Core Rulebook, p. 90 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> Deducts Focus and applies half the regular damage entered by the GM to the selected attacker.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "Deducts Focus and applies half the regular damage entered by the GM to the selected attacker.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:defense-stance",
@@ -195,9 +203,9 @@ export const STARTER = [
     "minRank": 1,
     "requires": [],
     "trainingAllowed": true,
-    "reviewed": false,
-    "source": "Starter example; prerequisites transcribed from supplied Actor export; full PDF verification pending.",
-    "description": "Maintain a defensive stance that imposes trouble on close attacks until one successfully hits you. Standard action; concentration.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 91 (supplied PDF).",
+    "description": "Power Set: Martial Arts. Prerequisites: None. Action: Standard. Duration: Concentration. Any close attacks made against the character have trouble until they are successfully attacked in this combat.",
     "item": {
       "name": "Defense Stance",
       "type": "power",
@@ -226,10 +234,12 @@ export const STARTER = [
           "edges": 0,
           "troubles": 0
         },
-        "description": "<p>Maintain a defensive stance that imposes trouble on close attacks until one successfully hits you. Standard action; concentration.</p><p><em>Creator summary. Consult the core rulebook for complete wording and exceptions. Combat effects are not automated by this module.</em></p>"
+        "description": "<p><strong>Power Set:</strong> Martial Arts</p><p><strong>Prerequisites:</strong> None</p><p><strong>Action:</strong> Standard</p><p><strong>Duration:</strong> Concentration</p><p>Any close attacks made against the character have trouble until they are successfully attacked in this combat.</p><p><em>Core Rulebook, p. 91 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> Tracks the stance. Its trouble is applied to close attacks made through Heroic Actions; use End after a successful attack from outside this workflow.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "Tracks the stance. Its trouble is applied to close attacks made through Heroic Actions; use End after a successful attack from outside this workflow.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:unflappable-poise",
@@ -243,9 +253,9 @@ export const STARTER = [
       "starter:defense-stance"
     ],
     "trainingAllowed": true,
-    "reviewed": false,
-    "source": "Starter example; prerequisites transcribed from supplied Actor export; full PDF verification pending.",
-    "description": "Close attacks against you have trouble; Defense Stance increases that to double trouble.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 128 (supplied PDF).",
+    "description": "Power Set: Martial Arts. Prerequisites: Defense Stance, Rank 3. Duration: Permanent. Any close attacks against the character have trouble. While they use Defense Stance, such attacks have double trouble.",
     "item": {
       "name": "Unflappable Poise",
       "type": "power",
@@ -272,10 +282,12 @@ export const STARTER = [
           "edges": 0,
           "troubles": 0
         },
-        "description": "<p>Close attacks against you have trouble; Defense Stance increases that to double trouble.</p><p><em>Creator summary. Consult the core rulebook for complete wording and exceptions. Combat effects are not automated by this module.</em></p>"
+        "description": "<p><strong>Power Set:</strong> Martial Arts</p><p><strong>Prerequisites:</strong> Defense Stance, Rank 3</p><p><strong>Duration:</strong> Permanent</p><p>Any close attacks against the character have trouble. While they use Defense Stance, such attacks have double trouble.</p><p><em>Core Rulebook, p. 128 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> Adds trouble to close attacks against this character through Heroic Actions, with double trouble during Defense Stance.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "Adds trouble to close attacks against this character through Heroic Actions, with double trouble during Defense Stance.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:sniping",
@@ -287,9 +299,9 @@ export const STARTER = [
     "minRank": 2,
     "requires": [],
     "trainingAllowed": true,
-    "reviewed": false,
-    "source": "Starter example; prerequisites transcribed from supplied Actor export; full PDF verification pending.",
-    "description": "Spend your standard and movement actions to shoot a target at least 20 spaces away. Costs 5 Focus; a Fantastic success increases damage. Consult the full power for resolution.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 120 (supplied PDF).",
+    "description": "Power Set: Ranged Weapons. Prerequisites: Rank 2. Action: Both standard and movement (character cannot move this turn). Duration: Instant. Cost: 5 Focus. The character makes a ranged attack against an enemy at least 20 spaces away. If the attack is a success, the enemy takes regular damage. On a Fantastic success, the enemy takes triple damage instead.",
     "item": {
       "name": "Sniping",
       "type": "power",
@@ -319,10 +331,12 @@ export const STARTER = [
           "edges": 0,
           "troubles": 0
         },
-        "description": "<p>Spend your standard and movement actions to shoot a target at least 20 spaces away. Costs 5 Focus; a Fantastic success increases damage. Consult the full power for resolution.</p><p><em>Creator summary. Consult the core rulebook for complete wording and exceptions. Combat effects are not automated by this module.</em></p>"
+        "description": "<p><strong>Power Set:</strong> Ranged Weapons</p><p><strong>Prerequisites:</strong> Rank 2</p><p><strong>Action:</strong> Both standard and movement (character cannot move this turn)</p><p><strong>Duration:</strong> Instant</p><p><strong>Cost:</strong> 5 Focus</p><p>The character makes a ranged attack against an enemy at least 20 spaces away. If the attack is a success, the enemy takes regular damage. On a Fantastic success, the enemy takes triple damage instead.</p><p><em>Core Rulebook, p. 120 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> Checks the GM-entered distance, deducts Focus, rolls Agility, and applies regular or triple damage after GM resolution.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "Checks the GM-entered distance, deducts Focus, rolls Agility, and applies regular or triple damage after GM resolution.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:snap-shooting",
@@ -334,9 +348,9 @@ export const STARTER = [
     "minRank": 1,
     "requires": [],
     "trainingAllowed": true,
-    "reviewed": false,
-    "source": "Starter example; prerequisites transcribed from supplied Actor export; full PDF verification pending.",
-    "description": "Use one Agility check for a split ranged attack against up to two targets. Damage and Fantastic effects require manual resolution; consult the full power.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 120 (supplied PDF).",
+    "description": "Power Set: Ranged Weapons. Prerequisites: None. Action: Standard. Duration: Instant. The character splits their attack to make two ranged attacks against separate targets (or they can focus a single attack on a single target). Make a single Agility check and compare it to the targets’ Agility defenses. On a success, an affected target takes half regular damage. On a Fantastic success, an affected target takes full damage and is bleeding.",
     "item": {
       "name": "Snap Shooting",
       "type": "power",
@@ -365,10 +379,12 @@ export const STARTER = [
           "edges": 0,
           "troubles": 0
         },
-        "description": "<p>Use one Agility check for a split ranged attack against up to two targets. Damage and Fantastic effects require manual resolution; consult the full power.</p><p><em>Creator summary. Consult the core rulebook for complete wording and exceptions. Combat effects are not automated by this module.</em></p>"
+        "description": "<p><strong>Power Set:</strong> Ranged Weapons</p><p><strong>Prerequisites:</strong> None</p><p><strong>Action:</strong> Standard</p><p><strong>Duration:</strong> Instant</p><p>The character splits their attack to make two ranged attacks against separate targets (or they can focus a single attack on a single target). Make a single Agility check and compare it to the targets’ Agility defenses. On a success, an affected target takes half regular damage. On a Fantastic success, an affected target takes full damage and is bleeding.</p><p><em>Core Rulebook, p. 120 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> One roll for up to two targets; applies half/full damage and a bleeding marker. Bleeding’s ongoing damage and recovery are manual.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "One roll for up to two targets; applies half/full damage and a bleeding marker. Bleeding’s ongoing damage and recovery are manual.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:weapons-blazing",
@@ -382,9 +398,9 @@ export const STARTER = [
       "starter:snap-shooting"
     ],
     "trainingAllowed": true,
-    "reviewed": false,
-    "source": "Starter example; prerequisites transcribed from supplied Actor export; full PDF verification pending.",
-    "description": "A split ranged attack whose Fantastic result can grant an additional attack. Resolve target selection, damage and follow-up attacks manually.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 130 (supplied PDF).",
+    "description": "Power Set: Ranged Weapons. Prerequisites: Snap Shooting. Action: Standard. Duration: Instant. The character splits their attack to make two ranged attacks against separate targets (or they can focus a single attack on a single target). Make a single Agility check and compare it to the targets’ Agility defenses. On a success, the affected target takes half regular damage. On a Fantastic success, the affected target takes full damage, and the character can make a bonus attack with this power against any available target, with the same effect.",
     "item": {
       "name": "Weapons Blazing",
       "type": "power",
@@ -413,10 +429,12 @@ export const STARTER = [
           "edges": 0,
           "troubles": 0
         },
-        "description": "<p>A split ranged attack whose Fantastic result can grant an additional attack. Resolve target selection, damage and follow-up attacks manually.</p><p><em>Creator summary. Consult the core rulebook for complete wording and exceptions. Combat effects are not automated by this module.</em></p>"
+        "description": "<p><strong>Power Set:</strong> Ranged Weapons</p><p><strong>Prerequisites:</strong> Snap Shooting</p><p><strong>Action:</strong> Standard</p><p><strong>Duration:</strong> Instant</p><p>The character splits their attack to make two ranged attacks against separate targets (or they can focus a single attack on a single target). Make a single Agility check and compare it to the targets’ Agility defenses. On a success, the affected target takes half regular damage. On a Fantastic success, the affected target takes full damage, and the character can make a bonus attack with this power against any available target, with the same effect.</p><p><em>Core Rulebook, p. 130 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> Applies half/full damage and unlocks a bonus-attack control after a Fantastic hit. The GM selects the new target.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "Applies half/full damage and unlocks a bonus-attack control after a Fantastic hit. The GM selects the new target.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:change-of-plans",
@@ -430,9 +448,9 @@ export const STARTER = [
       "starter:inspiration"
     ],
     "trainingAllowed": true,
-    "reviewed": false,
-    "source": "Starter example; prerequisites transcribed from supplied Actor export; full PDF verification pending.",
-    "description": "React when an ally has trouble on an action check to grant them an edge. Costs 5 Focus.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 87 (supplied PDF).",
+    "description": "Power Set: Tactics. Prerequisites: Inspiration, Rank 2. Action: Reaction. Trigger: An ally has trouble on an action check.. Duration: 1 round. Cost: 5 Focus. The ally gains an edge on that action check.",
     "item": {
       "name": "Change of Plans",
       "type": "power",
@@ -461,10 +479,12 @@ export const STARTER = [
           "edges": 0,
           "troubles": 0
         },
-        "description": "<p>React when an ally has trouble on an action check to grant them an edge. Costs 5 Focus.</p><p><em>Creator summary. Consult the core rulebook for complete wording and exceptions. Combat effects are not automated by this module.</em></p>"
+        "description": "<p><strong>Power Set:</strong> Tactics</p><p><strong>Prerequisites:</strong> Inspiration, Rank 2</p><p><strong>Action:</strong> Reaction</p><p><strong>Trigger:</strong> An ally has trouble on an action check.</p><p><strong>Duration:</strong> 1 round</p><p><strong>Cost:</strong> 5 Focus</p><p>The ally gains an edge on that action check.</p><p><em>Core Rulebook, p. 87 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> Deducts Focus and adds an edge to an unresolved native roll with trouble, before rerolls. The GM confirms the ally and trigger.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "Deducts Focus and adds an edge to an unresolved native roll with trouble, before rerolls. The GM confirms the ally and trigger.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:combat-support",
@@ -478,9 +498,9 @@ export const STARTER = [
       "starter:change-of-plans"
     ],
     "trainingAllowed": true,
-    "reviewed": false,
-    "source": "Starter example; prerequisites transcribed from supplied Actor export; full PDF verification pending.",
-    "description": "Once per battle, spend 10 Focus and a standard action to help an ally in earshot control their next special die result. Consult the full power for timing and restrictions.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 89 (supplied PDF).",
+    "description": "Power Set: Tactics. Prerequisites: Change of Plans, Rank 3. Action: Standard. Duration: 1 round. Cost: 10 Focus. Once per battle, the character chooses an ally in earshot. If the ally makes an action check before the start of the character’s next turn, the ally automatically rolls a 1 on their Marvel die, and that die cannot be affected by trouble.",
     "item": {
       "name": "Combat Support",
       "type": "power",
@@ -509,100 +529,112 @@ export const STARTER = [
           "edges": 0,
           "troubles": 0
         },
-        "description": "<p>Once per battle, spend 10 Focus and a standard action to help an ally in earshot control their next special die result. Consult the full power for timing and restrictions.</p><p><em>Creator summary. Consult the core rulebook for complete wording and exceptions. Combat effects are not automated by this module.</em></p>"
+        "description": "<p><strong>Power Set:</strong> Tactics</p><p><strong>Prerequisites:</strong> Change of Plans, Rank 3</p><p><strong>Action:</strong> Standard</p><p><strong>Duration:</strong> 1 round</p><p><strong>Cost:</strong> 10 Focus</p><p>Once per battle, the character chooses an ally in earshot. If the ally makes an action check before the start of the character’s next turn, the ally automatically rolls a 1 on their Marvel die, and that die cannot be affected by trouble.</p><p><em>Core Rulebook, p. 89 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> Requires an active combat; deducts Focus and enforces once per combat. Heroic Actions checks use the fixed special die until the source’s next turn.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "Requires an active combat; deducts Focus and enforces once per combat. Heroic Actions checks use the fixed special die until the source’s next turn.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:determination",
     "name": "Determination",
     "type": "trait",
     "sets": [],
-    "reviewed": false,
-    "source": "Core Rulebook; starter summary, full option audit pending.",
-    "description": "Being demoralized does not impose the usual trouble on your actions. Other demoralized restrictions still apply.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 60 (supplied PDF).",
+    "description": " The character never gives up, even when they feel like they’re at their worst. While demoralized, they do not gain trouble on all actions, though they still cannot maintain concentration or spend further Focus.",
     "item": {
       "name": "Determination",
       "type": "trait",
       "img": "icons/svg/book.svg",
       "system": {
-        "description": "<p>Being demoralized does not impose the usual trouble on your actions. Other demoralized restrictions still apply.</p>"
+        "description": "<p>The character never gives up, even when they feel like they’re at their worst. While demoralized, they do not gain trouble on all actions, though they still cannot maintain concentration or spend further Focus.</p><p><em>Core Rulebook, p. 60 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> Heroic Actions checks omit demoralized trouble; Focus and concentration restrictions remain.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "Heroic Actions checks omit demoralized trouble; Focus and concentration restrictions remain.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:fearless",
     "name": "Fearless",
     "type": "trait",
     "sets": [],
-    "reviewed": false,
-    "source": "Core Rulebook; starter summary, full option audit pending.",
-    "description": "Occupational trait granted by Adventurer. Consult the core rulebook for its mechanical effect.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 60 (supplied PDF).",
+    "description": " The character is extremely brave. They have an edge on any action checks required to deal with fear.",
     "item": {
       "name": "Fearless",
       "type": "trait",
       "img": "icons/svg/book.svg",
       "system": {
-        "description": "<p>Occupational trait granted by Adventurer. Consult the core rulebook for its mechanical effect.</p>"
+        "description": "<p>The character is extremely brave. They have an edge on any action checks required to deal with fear.</p><p><em>Core Rulebook, p. 60 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> Select Fear-related check in Heroic Actions to include the edge.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "Select Fear-related check in Heroic Actions to include the edge.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:connections-super-heroes-or-villains",
     "name": "Connections: Super Heroes or Villains",
     "type": "trait",
     "sets": [],
-    "reviewed": false,
-    "source": "Core Rulebook; starter summary, full option audit pending.",
-    "description": "A contact in the super hero or villain community. Choose the contact with the Narrator and consult the Connections trait.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 60 (supplied PDF).",
+    "description": " The character knows someone with access to and knowledge of a particular field. The connection could be a reporter, a police officer, a politician, a mobster and so on. By making an Ego check, the character can call on their contact to provide help in the form of clues, information or resources. The Narrator determines the TN of the Ego check based on the favor requested.\n\nThis trait can be selected multiple times, using many different types. These include Celebrities, Community, Criminal, Espionage, Military, Outsiders, Police, Professional, Sources, Super Heroes and so on.",
     "item": {
       "name": "Connections: Super Heroes or Villains",
       "type": "trait",
       "img": "icons/svg/book.svg",
       "system": {
-        "description": "<p>A contact in the super hero or villain community. Choose the contact with the Narrator and consult the Connections trait.</p>"
+        "description": "<p>The character knows someone with access to and knowledge of a particular field. The connection could be a reporter, a police officer, a politician, a mobster and so on. By making an Ego check, the character can call on their contact to provide help in the form of clues, information or resources. The Narrator determines the TN of the Ego check based on the favor requested.</p><p>This trait can be selected multiple times, using many different types. These include Celebrities, Community, Criminal, Espionage, Military, Outsiders, Police, Professional, Sources, Super Heroes and so on.</p><p><em>Core Rulebook, p. 60 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> Use an Ego noncombat check with a GM-set target number. The GM determines the contact’s help.</p><p>Selected field: Super Heroes or Villains. Choose a contact with the GM.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "Use an Ego noncombat check with a GM-set target number. The GM determines the contact’s help.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:black-market-access",
     "name": "Black Market Access",
     "type": "tag",
     "sets": [],
-    "reviewed": false,
-    "source": "Core Rulebook; starter summary, full option audit pending.",
-    "description": "Backstory tag indicating access to illicit markets.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 63 (supplied PDF).",
+    "description": " The character knows how and where they can buy and sell hard-to-find and potentially illegal things.",
     "item": {
       "name": "Black Market Access",
       "type": "tag",
       "img": "icons/svg/book.svg",
       "system": {
-        "description": "<p>Backstory tag indicating access to illicit markets.</p>"
+        "description": "<p>The character knows how and where they can buy and sell hard-to-find and potentially illegal things.</p><p><em>Core Rulebook, p. 63 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> Narrative permission; the GM determines availability and prices.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "Narrative permission; the GM determines availability and prices.",
+    "contentVersion": "0.2.0"
   },
   {
     "id": "starter:heroic",
     "name": "Heroic",
     "type": "tag",
     "sets": [],
-    "reviewed": false,
-    "source": "Core Rulebook; starter summary, full option audit pending.",
-    "description": "Backstory tag identifying a heroic character.",
+    "reviewed": true,
+    "source": "Core Rulebook, p. 64 (supplied PDF).",
+    "description": " The character acts heroically. They help people in need, and they do their best not to kill—even with people who might deserve it.",
     "item": {
       "name": "Heroic",
       "type": "tag",
       "img": "icons/svg/book.svg",
       "system": {
-        "description": "<p>Backstory tag identifying a heroic character.</p>"
+        "description": "<p>The character acts heroically. They help people in need, and they do their best not to kill—even with people who might deserve it.</p><p><em>Core Rulebook, p. 64 (supplied PDF).</em></p><hr><p><strong>Heroic Actions:</strong> The GM can reset Karma to rank with the Heroic Actions rest control. Cannot also be Villainous.</p>"
       },
       "effects": []
-    }
+    },
+    "automation": "The GM can reset Karma to rank with the Heroic Actions rest control. Cannot also be Villainous.",
+    "contentVersion": "0.2.0"
   }
 ];
 export const ORIGINS = [{"id": "special-training", "name": "Special Training", "grants": ["starter:determination"], "source": "Core p. 56"}, {"id": "custom", "name": "Custom / other origin (manual)", "grants": []}];

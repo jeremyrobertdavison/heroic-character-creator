@@ -1,8 +1,8 @@
-# Validation status — 0.1.1
+# Validation status — 0.2.0
 
 ## Completed
 
-- 55 automated Node tests pass: rules, provenance, prerequisite checks, drafts/imports, escaped interface rendering, native field mapping, permissions, source conflicts, edit preservation, recovery snapshots and simulated partial failure.
+- 79 automated Node tests pass: rules, provenance, prerequisite checks, drafts/imports, escaped interface rendering, native field mapping, permissions, source conflicts, edit preservation, recovery snapshots and simulated partial failure.
 - JavaScript files pass syntax checks.
 - Native field mappings and Item types were compared with the supported system source and sample character export.
 - Release ZIP contents, entry points, manifest asset paths and version consistency are checked before delivery.
@@ -49,3 +49,19 @@ If a save reports an incomplete operation, inspect the recovery copy before retr
 - Fill the power/trait allowance and attempt one extra selection. The option must be disabled and no negative remaining balance introduced.
 - Create a rank-1 character with Melee 2, Resilience 3 and Vigilance 0: Health must be 90 and Focus 10.
 - Confirm GM and player users receive the same hard-limit checks.
+
+
+## Version 0.2.0 live-world acceptance
+
+- Update a duplicate character's included content. Verify Item IDs, custom artwork/effects, current pools, and recovery copy; verify imported same-name Items are untouched.
+- Open Heroic Actions as GM and player. Confirm player requests spend nothing; another active GM cannot resolve concurrently.
+- Use Attack Stance, check the native Melee damage bonus, end it, and verify removal. Test zero Focus removes concentration.
+- Use Defense Stance plus Unflappable Poise; make a Heroic close attack against the character. Check double trouble and stance removal after a hit.
+- Cancel Sniping before and during the native roll dialog. Check no Focus is spent. Resolve a valid Sniping attack; check 5 Focus, triple regular damage on Fantastic, and no repeat damage.
+- Use Snap Shooting against two targets. Check each defense and damage reduction, half/full damage, and bleeding marker. Resolve bleeding manually.
+- Use Weapons Blazing. Check a Fantastic hit grants a bonus, cancellation preserves it, and a completed bonus cannot be repeated from the same card.
+- Test Inspiration and Combat Support on another Actor. Check source-turn expiry, fixed special die and reroll protection. Test once-per-combat enforcement and deleting combat.
+- Use Change of Plans and Slow-Motion Dodge on unresolved native rolls. Verify resource cost, correct edge/trouble and duplicate prevention.
+- Test Fearless on a fear check; Determination at zero Focus; Connections Ego check; Heroic Karma after rest.
+- Reload the world with an unresolved attack and with active effects. Check persisted flags, native dice hydration, ownership and effect timing.
+- Test a player and GM in separate browsers, including a transferred GM role and a target on the canvas. Check that no effect is applied twice.

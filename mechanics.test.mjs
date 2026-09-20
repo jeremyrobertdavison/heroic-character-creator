@@ -1,0 +1,31 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {ID,LEGACY_ID,newBuild,addEntry,derived,evaluate} from '../scripts/rules.js';
+import {STARTER} from '../scripts/catalogue.js';
+import {definition,damageFor,validatePower,modifiers,timedExpired,upgradeChanges,catalogueId} from '../scripts/mechanics.js';
+const item=key=>({id:key,flags:{[ID]:{catalogueId:`starter:${key}`}}});
+const actor=(keys=[],effects=[])=>({system:{rank:3,lifepool:{focus:{value:10},health:{value:10}}},items:keys.map(item),effects:effects.map(kind=>({flags:{[ID]:{kind}}}))});
+test('special damage follows each power rather than generic Fantastic doubling',()=>{
+ const base={middle:6,multiplier:3,modifier:5};
+ assert.equal(damageFor('sniping',{...base,fantastic:true}),69);
+ assert.equal(damageFor('snap-shooting',{...base,fantastic:true}),23);
+ assert.equal(damageFor('snap-shooting',base),12);
+ assert.equal(damageFor('weapons-blazing',base),12);
+ assert.equal(damageFor('melee',{...base,fantastic:true}),46);
+ assert.equal(damageFor('sniping',{...base,fantastic:true,resistance:3}),0);
+ assert.equal(damageFor('sniping',{...base,hit:false}),0);
+ assert.equal(damageFor('sniping',{...base,fantastic:true,resistance:1}),51);
+});
+test('invalid damage data fails closed',()=>{assert.throws(()=>damageFor('sniping',{middle:NaN,multiplier:2,modifier:0}));assert.throws(()=>damageFor('sniping',{middle:6,multiplier:2,modifier:0,resistance:-1}));});
+test('eligibility, Focus, and active Counterstrike stance are checked at use time',()=>{
+ const a=actor(['counterstrike-technique','attack-stance']);const d=definition('starter:counterstrike-technique');
+ assert.throws(()=>validatePower(a,d),/active/);a.effects.push({flags:{[ID]:{kind:'attack-stance'}}});assert.doesNotThrow(()=>validatePower(a,d));
+ a.system.lifepool.focus.value=4;assert.throws(()=>validatePower(a,d),/Focus/);a.system.lifepool.focus.value=10;a.system.rank=1;assert.throws(()=>validatePower(a,d),/rank/);
+});
+test('Determination removes demoralized trouble without enabling concentration',()=>{const a=actor(['determination','attack-stance']);a.system.lifepool.focus.value=0;assert.equal(modifiers(a).troubles,0);assert.throws(()=>validatePower(a,definition('starter:attack-stance')),/concentration/);a.items=[];assert.equal(modifiers(a).troubles,1);});
+test('Fearless, Inspiration and defensive passives are contextual',()=>{const a=actor(['fearless'],['inspiration']),t=actor(['unflappable-poise'],['defense-stance']);assert.deepEqual(modifiers(a,{fear:true,target:t,close:true}),{edges:2,troubles:2,support:false});assert.equal(modifiers(a,{target:t}).troubles,0);t.effects[0].disabled=true;assert.equal(modifiers(a,{target:t,close:true}).troubles,1);});
+test('timed benefits expire at source next turn, not ally turn or another combat',()=>{const flag={combatId:'c',round:1,turn:2,sourceActor:'Actor.source'};const c={id:'c',round:1,turn:2,combatant:{actor:{uuid:'Actor.source'}}};assert.equal(timedExpired(flag,c),false);assert.equal(timedExpired(flag,{...c,round:2}),true);assert.equal(timedExpired(flag,{...c,round:2,combatant:{actor:{uuid:'Actor.ally'}}}),false);assert.equal(timedExpired(flag,{...c,id:'other',round:2}),false);});
+test('content upgrade identifies by provenance and preserves unrelated data',()=>{const a=actor(['sniping']);a.items.push({id:'fake',name:'Sniping',system:{description:'Custom'}});a.items[0].effects=[{name:'custom'}];const changes=upgradeChanges(a);assert.equal(changes.length,1);assert.equal(changes[0]._id,'sniping');assert.match(changes[0]['system.description'],/triple damage/);for(const k of ['name','img','effects','system.lifepool.focus.value'])assert.equal(changes[0][k],undefined);});
+test('legacy provenance is recognized, matching names alone are not',()=>{assert.equal(catalogueId({flags:{[LEGACY_ID]:{catalogueId:'starter:heroic'}}}),'starter:heroic');assert.equal(catalogueId({name:'Heroic'}),undefined);});
+test('all included entries have rule information and explicit automation coverage',()=>{assert.equal(STARTER.length,16);for(const d of STARTER){assert.equal(d.reviewed,true);assert.match(d.source,/p\. \d+/);assert.ok(d.automation);assert.doesNotMatch(d.item.system.description,/Creator summary|full PDF verification pending|Combat effects are not automated/);}});
+test('Heroic governs starting Karma and conflicts with incompatible tags',()=>{const b=newBuild();b.rank=3;assert.equal(derived(b).karma,0);addEntry(b,definition('starter:heroic'));assert.equal(derived(b).karma,3);addEntry(b,{id:'native:villainous',name:'Villainous',type:'tag',sets:[]});assert.match(evaluate(b).errors.join(),/Heroic cannot/);});

@@ -49,7 +49,7 @@ test('unknown imported content remains unverified',()=>{
 });
 test('ordinary derived totals and movement rounding',()=>{
  const b=newBuild();b.abilities.resilience=2;b.abilities.vigilance=3;b.abilities.agility=5;
- assert.deepEqual(derived(b),{health:60,focus:90,initiative:3,run:6,climb:3,swim:3,jump:3,karma:1});
+ assert.deepEqual(derived(b),{health:60,focus:90,initiative:3,run:6,climb:3,swim:3,jump:3,karma:0});
  b.abilities.agility=0;assert.equal(derived(b).climb,3);
 });
 test('zero abilities still give minimum Health and Focus of 10',()=>{const r=evaluate(newBuild());assert.equal(r.stats.health,10);assert.equal(r.stats.focus,10);});

@@ -1,5 +1,6 @@
 import {ID,LEGACY_ID} from './rules.js';
 import {CharacterCreator} from './app.js';
+import {openActions,upgradeContent,registerActionHooks} from './actions.js';
 const openWindows=new Map();
 export function openCreator(actor=null) {
   if(game.system.id!=='mvrpg')return ui.notifications.error('This creator requires the mvrpg game system.');
@@ -24,8 +25,9 @@ Hooks.once('init',()=>{
 });
 Hooks.once('ready',()=>{
   if(game.modules.get(LEGACY_ID)?.active)ui.notifications.warn('Disable the earlier Character Creator module before using Heroic Character Creator.');
-  game.modules.get(ID).api={open:openCreator,create:()=>openCreator(),version:'0.1.1'};
+  game.modules.get(ID).api={open:openCreator,create:()=>openCreator(),actions:openActions,upgradeContent,version:'0.2.0'};
   if(game.system.id!=='mvrpg')return;
+  registerActionHooks();
   ui.actors?.render({force:true});
 });
 // ApplicationV2 hooks pass HTMLElements; older sidebar hooks may still pass jQuery.
@@ -41,6 +43,7 @@ Hooks.on('renderActorSheetV2',(app,html)=>{
   if(game.system.id!=='mvrpg'||actor?.type!=='super'||(!actor.isOwner&&!game.user.isGM)||actor.isToken)return;
   const root=rootOf(html);
   addButton(root?.querySelector('.window-header')??root?.querySelector('.window-content'),'Open Creator',()=>openCreator(actor),'mcc-sheet-launch');
+  addButton(root?.querySelector('.window-header')??root?.querySelector('.window-content'),'Heroic Actions',()=>openActions(actor),'hcc-actions-launch');
 });
 // Explicit system sheet hook protects against systems restricting parent hook propagation.
 Hooks.on('renderSuperSheet',(app,html)=>{
@@ -48,4 +51,5 @@ Hooks.on('renderSuperSheet',(app,html)=>{
   if(game.system.id!=='mvrpg'||actor?.type!=='super'||(!actor.isOwner&&!game.user.isGM)||actor.isToken)return;
   const root=rootOf(html);
   addButton(root?.querySelector('.window-header')??root?.querySelector('.window-content'),'Open Creator',()=>openCreator(actor),'mcc-sheet-launch');
+  addButton(root?.querySelector('.window-header')??root?.querySelector('.window-content'),'Heroic Actions',()=>openActions(actor),'hcc-actions-launch');
 });

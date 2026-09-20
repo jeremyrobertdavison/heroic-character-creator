@@ -1,3 +1,13 @@
+# 0.2.0 — Included rules and Heroic Actions
+
+- Added core rule information and page references for the 11 included powers, three traits and two tags.
+- Added Heroic Actions on sheets: ability checks, player requests and GM-assisted power resolution.
+- Implemented Focus spending, stances, timed ally benefits, reactions, special damage, bleeding markers and earned bonus attacks.
+- Added contextual Fearless/Determination handling and Heroic Karma behavior.
+- Added recovery-backed content upgrades for existing linked Items.
+- Added cancellation, permission, timing, damage and replay protection tests.
+- Preserved hard creation limits from 0.1.1. Live Foundry testing remains required; see docs/HEROIC-ACTIONS.md for automation boundaries.
+
 # Changelog
 
 ## 0.1.1

@@ -2,7 +2,7 @@
 
 A guided superhero character creator and editor for Foundry Virtual Tabletop 13.
 
-**Version 0.1.1 is a prototype.** It provides a usable creation workflow, core budget checks, a small starter catalogue, native Item imports, and GM editing with recovery copies. It does **not** contain the complete core-rulebook catalogue or enforce every character-creation exception. Every build requires manual rules review.
+**Version 0.2.0 is a prototype.** It provides a usable creation workflow, core budget checks, a small starter catalogue, native Item imports, and GM editing with recovery copies. It does **not** contain the complete core-rulebook catalogue or enforce every character-creation exception. Every build requires manual rules review.
 
 ## Requirements
 
@@ -66,7 +66,7 @@ No live character changes occur until a save. Granted options show their source.
 - Heroic tag.
 - Eleven example powers: Inspiration, Slow-Motion Dodge, Attack Stance, Counterstrike Technique, Defense Stance, Unflappable Poise, Sniping, Snap Shooting, Weapons Blazing, Change of Plans, and Combat Support.
 
-The powers use short original summaries and native system Item fields. The example's prerequisite metadata is transcribed from the supplied character export and has not received a complete PDF audit. The UI marks these options for manual review. It does not automatically execute their combat effects.
+The included powers, traits and tags now carry core rule information and printed-page references checked against the supplied PDF. **Heroic Actions** provides GM-assisted use, Focus costs, native rolls, stances, timed ally benefits, reactions and special damage. Each entry describes its automation coverage. See [Heroic Actions](docs/HEROIC-ACTIONS.md) for the coverage table and workflow. Imported content remains subject to manual review.
 
 ### Importing your own content
 
@@ -92,7 +92,7 @@ New characters default to basic calculated Health, Focus, initiative and ordinar
 
 Health and Focus maxima each have a minimum of 10, including when Resilience or Vigilance is zero or negative (core rules, printed p. 19). Basic movement does not implement every negative-score, size or power exception. Effect-adjusted totals must not be manually added again to stored base fields.
 
-The module does not clear existing Active Effects, inventory, special movement modes, initiative edge, biography, token settings, or unrelated bonus fields. New starter powers have no automated Active Effects. Existing characters retain current Health, Focus and Karma, even if a changed maximum is lower. Resolve any over-maximum current pool on the native sheet. Save as New preserves a copied character's current pools too.
+The module does not clear existing Active Effects, inventory, special movement modes, initiative edge, biography, token settings, or unrelated bonus fields. Using included stances and timed benefits through Heroic Actions creates managed Active Effects. New characters receive Karma equal to rank only with the included Heroic tag. Existing characters retain current Health, Focus and Karma, even if a changed maximum is lower. Resolve any over-maximum current pool on the native sheet. Save as New preserves a copied character's current pools too.
 
 ## Hard creation limits in 0.1.1
 
@@ -115,7 +115,7 @@ Drafts are not world backups. Clearing browser data removes local drafts. Existi
 
 ## Safe editing and recovery
 
-Existing-character updates are GM-only in 0.1.1. Before writing, the module:
+Existing-character updates are GM-only in 0.2.0. Before writing, the module:
 
 1. Checks ownership, actor type, and source data for intervening changes.
 2. Creates a recovery Actor with no player ownership in **Character Creator — Recovery**.
@@ -147,3 +147,7 @@ npm test
 Tests exercise budgets, prerequisites, grants, permission restrictions, new native data, edit preservation, stale baselines, recovery copies and injected partial failures. See `docs/TESTING.md` for the exact validation status and the live Foundry acceptance checklist.
 
 An independent community project. Rulebook PDFs and artwork are not included. Refer to your game’s books for complete rules text.
+
+## Updating existing included content
+
+Open the character’s **Heroic Actions** panel as GM and click **Update included content**. A recovery Actor is created before linked included Items receive current descriptions and settings. Item IDs, names, artwork, effects and current pools are preserved; custom descriptions/settings on those Items are replaced. See [the action guide](docs/HEROIC-ACTIONS.md) before the first combat.

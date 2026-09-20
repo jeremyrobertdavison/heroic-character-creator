@@ -8,7 +8,7 @@ export function newBuild() {
   return {schema:1,name:'New Hero',img:'icons/svg/mystery-man.svg',rank:1,rankCap:6,
     abilities:Object.fromEntries(ABILITIES.map(k=>[k,0])),identity:{codeName:'',realName:'',origin:'',occupation:''},
     originId:'',occupationId:'',entries:[],exchanges:{abilities:0,traits:0},
-    recalculate:true,resources:{health:10,focus:10,initiative:0,run:5,climb:3,swim:3,jump:3,karma:1},
+    recalculate:true,resources:{health:10,focus:10,initiative:0,run:5,climb:3,swim:3,jump:3,karma:0},
     acknowledge:false};
 }
 export function addEntry(build, definition, source='choice') {
@@ -38,7 +38,7 @@ export function derived(build) {
   const a=build.abilities, run=5+Math.floor(Math.max(0,a.agility)/5);
   // Core Rulebook p. 19: minimum maximum pool is 10, including zero/negative abilities.
   return {health:Math.max(10,a.resilience*30),focus:Math.max(10,a.vigilance*30),initiative:a.vigilance,
-    run,climb:Math.ceil(run/2),swim:Math.ceil(run/2),jump:Math.ceil(run/2),karma:build.rank};
+    run,climb:Math.ceil(run/2),swim:Math.ceil(run/2),jump:Math.ceil(run/2),karma:build.entries.some(e=>e.definition.id==='starter:heroic')?build.rank:0};
 }
 export function evaluate(build) {
   const errors=[],warnings=[], add=(message)=>errors.push(message);
@@ -61,6 +61,7 @@ export function evaluate(build) {
   const traitBudget=build.rank+build.exchanges.traits;
   if(traits>traitBudget) add(`Discretionary traits exceed the budget by ${traits-traitBudget}. Reconcile granted traits or exchanges.`);
   const selected=new Set(build.entries.map(e=>e.definition.id));
+  if(selected.has('starter:heroic')&&build.entries.some(e=>['villainous','bloodthirsty'].includes(e.definition.name.trim().toLowerCase())))add('Heroic cannot be combined with Villainous or Bloodthirsty.');
   const allowed=new Set(['martialArts','meleeWeapons','rangedWeapons','shieldBearer','tactics']);
   for(const {definition:d} of build.entries) {
     if(d.minRank && build.rank<d.minRank) add(`${d.name} requires rank ${d.minRank}.`);
