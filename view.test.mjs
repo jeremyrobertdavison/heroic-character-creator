@@ -15,3 +15,8 @@ test('existing-character save is disabled for players and copy stays available',
  const actor={system:{lifepool:{health:{value:0},focus:{value:0}}}};const html=renderView({build:newBuild(),step:4,catalogue:STARTER,actor,isGM:false});
  assert.match(html,/data-cmd="save" disabled/);assert(html.includes('Save as New Character'));assert(!html.includes('GM exception reason'));
 });
+test('rank-cap selector and GM exception are absent; unavailable powers are disabled',()=>{
+ const b=newBuild();const first=renderView({build:b,step:0,catalogue:STARTER,isGM:true});assert(!first.includes('data-field="rankCap"'));
+ const review=renderView({build:b,step:4,catalogue:STARTER,isGM:true});assert(!review.includes('data-field="override"'));
+ const options=renderView({build:b,step:3,catalogue:STARTER,isGM:true});assert.match(options,/data-id="starter:change-of-plans"[^>]*disabled/);assert(options.includes('requires rank 2'));
+});

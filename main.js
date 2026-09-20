@@ -24,7 +24,7 @@ Hooks.once('init',()=>{
 });
 Hooks.once('ready',()=>{
   if(game.modules.get(LEGACY_ID)?.active)ui.notifications.warn('Disable the earlier Character Creator module before using Heroic Character Creator.');
-  game.modules.get(ID).api={open:openCreator,create:()=>openCreator(),version:'0.1.0'};
+  game.modules.get(ID).api={open:openCreator,create:()=>openCreator(),version:'0.1.1'};
   if(game.system.id!=='mvrpg')return;
   ui.actors?.render({force:true});
 });

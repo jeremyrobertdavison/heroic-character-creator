@@ -2,7 +2,7 @@
 
 A guided superhero character creator and editor for Foundry Virtual Tabletop 13.
 
-**Version 0.1.0 is a prototype.** It provides a usable creation workflow, core budget checks, a small starter catalogue, native Item imports, and GM editing with recovery copies. It does **not** contain the complete core-rulebook catalogue or enforce every character-creation exception. Every build requires manual rules review.
+**Version 0.1.1 is a prototype.** It provides a usable creation workflow, core budget checks, a small starter catalogue, native Item imports, and GM editing with recovery copies. It does **not** contain the complete core-rulebook catalogue or enforce every character-creation exception. Every build requires manual rules review.
 
 ## Requirements
 
@@ -51,7 +51,7 @@ Use an Actor from the directory. Unlinked token Actors and the `npc` type are no
 
 ## Workflow
 
-1. **Identity:** enter a name, portrait, rank and rank cap.
+1. **Identity:** enter a name, portrait, rank (1–6).
 2. **Abilities:** allocate ability scores. Exchange power picks for ability points or additional traits if desired.
 3. **Backstory:** choose a starter package or enter other origins/occupations manually.
 4. **Options:** add powers, traits and tags. Load your world Items or an accessible Item compendium, import JSON, drag an Item onto the creator, or make a custom option.
@@ -82,17 +82,30 @@ Custom powers require the supported system’s internal power-set key, such as `
 
 ### Legacy character reconciliation
 
-The creator loads existing powers, traits and tags without silently matching them to starter records by name. Existing traits initially count as discretionary. Use **Mark as grant** for traits provided by an origin, occupation or other source, and record exchanged picks on Abilities. If the original allocation cannot be reconstructed or intentionally breaks a rule, the GM can supply an exception reason on Review.
+The creator loads existing powers, traits and tags without silently matching them to starter records by name. Existing traits initially count as discretionary. Starter backstory packages track their own grants. Manual grant relabeling and the creator’s GM exception override have been removed. Record legitimate exchanged picks on Abilities. Nonstandard legacy allocations must be handled on the native character sheet; the creator will not save a build that violates its hard limits.
 
-This release supports manual reconciliation rather than automatically reverse-engineering a legacy character. Imported and starter versions of the same power are separate options; do not add both unless intentional. Prerequisite links on starter options reference other starter options; mixed-source equivalents may need GM review.
+This release supports manual reconciliation rather than automatically reverse-engineering a legacy character. Imported and starter versions of the same power are separate options; do not add both unless intentional. Prerequisite links on starter options reference other starter options; mixed-source equivalents require proper catalogue mappings before the creator can treat them as interchangeable.
 
 ### Statistics and effects
 
 New characters default to basic calculated Health, Focus, initiative and ordinary movement. Existing characters default to their stored totals. Uncheck **Calculate basic totals** to enter reviewed manual totals, including static power/trait/size adjustments.
 
-Nonpositive Resilience or Vigilance produces a manual-review warning; confirm the correct pool totals rather than accepting zero by assumption. Basic movement does not implement every negative-score, size or power exception. Effect-adjusted totals must not be manually added again to stored base fields.
+Health and Focus maxima each have a minimum of 10, including when Resilience or Vigilance is zero or negative (core rules, printed p. 19). Basic movement does not implement every negative-score, size or power exception. Effect-adjusted totals must not be manually added again to stored base fields.
 
 The module does not clear existing Active Effects, inventory, special movement modes, initiative edge, biography, token settings, or unrelated bonus fields. New starter powers have no automated Active Effects. Existing characters retain current Health, Focus and Karma, even if a changed maximum is lower. Resolve any over-maximum current pool on the native sheet. Save as New preserves a copied character's current pools too.
+
+## Hard creation limits in 0.1.1
+
+- Rank is always 1–6. There is no configurable rank cap.
+- Each ability is a whole number from -3 through rank + 3. Controls also limit spending to the remaining pool. Invalid typed or pasted values are rejected.
+- Spend every available ability point before advancing beyond Abilities. Direct tab clicks and final saves enforce the same gate. You can still return to Identity to adjust rank or remain on Abilities to edit exchanges.
+- Rank changes are rejected if they would invalidate current scores, point budgets, traits or known power prerequisites. Reduce allocations or remove dependent options first; the creator does not silently erase your choices.
+- Power and discretionary-trait limits are enforced before adding an option. Power-set changes account for lost thematic picks.
+- Known rank and prerequisite requirements disable the power’s Add button and show the reason. Required powers cannot be removed while a selected power depends on them.
+- The same limits apply to GMs. There is no creator override or manual “count as grant” shortcut. Use the native character sheet for nonstandard adjustments.
+- Unspent power picks and discretionary traits may remain; the full-spend gate applies to ability points.
+
+For characters created by 0.1.0 with a zero maximum pool, open Review and enable basic total calculation, or enter the corrected maximum manually. Saving an edit preserves the current pool to avoid healing an injured character. For an uninjured test character with Vigilance 0, set both maximum and current Focus to 10 on the native sheet.
 
 ## Drafts
 
@@ -102,7 +115,7 @@ Drafts are not world backups. Clearing browser data removes local drafts. Existi
 
 ## Safe editing and recovery
 
-Existing-character updates are GM-only in 0.1.0. Before writing, the module:
+Existing-character updates are GM-only in 0.1.1. Before writing, the module:
 
 1. Checks ownership, actor type, and source data for intervening changes.
 2. Creates a recovery Actor with no player ownership in **Character Creator — Recovery**.
@@ -119,7 +132,7 @@ Foundry writes are not a transaction. Source checks protect against detected int
 
 Implemented checks include ordinary rank and ability limits, rank-based ability and trait budgets, Basic-excluded thematic bonuses, one-for-one power exchanges, starter prerequisites/rank requirements, and the starter Special Training restriction. Grant provenance is tracked for starter packages and manual grant classifications.
 
-Not fully covered: complete origin/occupation choices, multiple structured backstory packages, all published options, advanced power-set counting, Surprising Power exceptions, exceptional ability caps, full repeatability/variant rules, all static modifiers and stacking, automatic reconciliation of existing automation, and conditional combat effects. General book legality is never certified by the prototype. A GM exception bypasses implemented rules checks but not permissions or invalid numeric data.
+Not fully covered: complete origin/occupation choices, multiple structured backstory packages, all published options, advanced power-set counting, Surprising Power exceptions, full repeatability/variant rules, all static modifiers and stacking, automatic reconciliation of existing automation, and conditional combat effects. General book legality is never certified by the prototype. Imported/custom powers without structured prerequisites still require manual eligibility review; known starter prerequisites are enforced before selection. The creator enforces the same implemented hard limits for GMs and players. Nonstandard adjustments can be made on the native sheet afterward.
 
 Disabling the module leaves native Actors and Items usable. Build metadata remains in module flags, and ordinary system sheets continue to work.
 

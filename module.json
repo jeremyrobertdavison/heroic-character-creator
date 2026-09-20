@@ -2,7 +2,7 @@
   "id": "heroic-character-creator",
   "title": "Heroic Character Creator",
   "description": "Guided superhero character creation and editing. Prototype with core budgets, starter options, native Item imports, and recovery copies for GM edits. Requires the supported game system.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "authors": [
     {
       "name": "Jeremy Davison"
@@ -29,5 +29,5 @@
   ],
   "url": "https://github.com/jeremyrobertdavison/heroic-character-creator",
   "manifest": "https://github.com/jeremyrobertdavison/heroic-character-creator/releases/latest/download/module.json",
-  "download": "https://github.com/jeremyrobertdavison/heroic-character-creator/releases/download/v0.1.0/heroic-character-creator.zip"
+  "download": "https://github.com/jeremyrobertdavison/heroic-character-creator/releases/download/v0.1.1/heroic-character-creator.zip"
 }

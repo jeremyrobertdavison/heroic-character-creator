@@ -1,4 +1,4 @@
-import {ID,LEGACY_ID,clone,uid,newBuild,addEntry,setPackage,validateDraft,derived} from './rules.js';
+import {ID,LEGACY_ID,clone,uid,newBuild,addEntry,setPackage,validateDraft,derived,applyAbility,applyRank,applyExchange,addAllowedEntry,removeAllowedEntry,navigationErrors,selectionErrors} from './rules.js';
 import {STARTER,ORIGINS,OCCUPATIONS} from './catalogue.js';
 import {fromActor,fingerprint,definitionFromItem,planChanges,commit} from './adapter.js';
 import {renderView,esc} from './view.js';
@@ -40,12 +40,30 @@ export class CharacterCreator extends ApplicationV2 {
       const el=event.target;
       if(el.matches('[data-field]')) {
         const path=el.dataset.field, value=el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;
-        if(path==='originId'||path==='occupationId') setPackage(this.build,path,value,path==='originId'?ORIGINS:OCCUPATIONS,this.catalogue);
-        else {
-          if(path==='recalculate'&&!value) this.build.resources=derived(this.build);
-          const parts=path.split('.');let obj=this.build;for(const key of parts.slice(0,-1))obj=obj[key];obj[parts.at(-1)]=value;
+        try {
+          if(path==='rank')applyRank(this.build,value);
+          else if(path.startsWith('abilities.'))applyAbility(this.build,path.split('.')[1],value);
+          else if(path.startsWith('exchanges.'))applyExchange(this.build,path.split('.')[1],value);
+          else if(['resources.health','resources.focus'].includes(path)) {
+            if(!Number.isInteger(value)||value<10)throw new Error('Maximum Health and Focus must each be at least 10.');
+            this.build.resources[path.split('.')[1]]=value;
+          }
+          else if(path==='originId'||path==='occupationId') {
+            const candidate=clone(this.build);
+            setPackage(candidate,path,value,path==='originId'?ORIGINS:OCCUPATIONS,this.catalogue);
+            const errors=selectionErrors(candidate);if(errors.length)throw new Error(errors.join(' '));
+            this.build=candidate;
+          } else {
+            if(path==='recalculate'&&!value)this.build.resources=derived(this.build);
+            const parts=path.split('.');let obj=this.build;for(const key of parts.slice(0,-1))obj=obj[key];obj[parts.at(-1)]=value;
+          }
+          if(path!=='acknowledge')this.build.acknowledge=false;
+        } catch(error) {
+          // Restore immediately so typed/pasted invalid values cannot linger in the control.
+          const old=path.split('.').reduce((o,k)=>o?.[k],this.build);
+          if(el.type==='checkbox')el.checked=old;else el.value=old;
+          ui.notifications.warn(error.message);
         }
-        if(path!=='acknowledge'&&path!=='override') this.build.acknowledge=false;
         this.persist();clearTimeout(this.refreshTimer);this.refreshTimer=setTimeout(()=>this.render({force:true}),160);
       }
       if(el.matches('.mcc-options-file')) this.readFile(el, false).catch(e=>this.error(e));
@@ -84,7 +102,7 @@ export class CharacterCreator extends ApplicationV2 {
     if(this.actor&&data.actorUuid!==this.actor.uuid)throw new Error('This draft belongs to another character. Open a new creator to import it as a new character.');
     if(this.actor && data.baseline!==fingerprint(this.actor))throw new Error('The character changed after this draft was saved. Import the draft into a new creator to make a copy, or reopen the current character to reconcile changes.');
     if(!this.actor)for(const entry of build.entries)delete entry.itemId;
-    this.build=build;this.build.acknowledge=false;
+    this.build=build;this.build.rankCap=6;delete this.build.override;this.build.acknowledge=false;
     for(const e of build.entries)if(!this.catalogue.some(d=>d.id===e.definition.id))this.catalogue.push(clone(e.definition));
     this.persist();this.render({force:true});
   }
@@ -112,8 +130,12 @@ export class CharacterCreator extends ApplicationV2 {
   }
   async command(cmd,button) {
     clearTimeout(this.refreshTimer);
-    if(cmd==='step')this.step=Number(button.dataset.step);
-    else if(cmd==='next')this.step=Math.min(4,this.step+1);
+    if(cmd==='step'||cmd==='next') {
+      const target=cmd==='step'?Number(button.dataset.step):Math.min(4,this.step+1);
+      const errors=navigationErrors(this.build,this.step,target);
+      if(errors.length)throw new Error(errors.join(' '));
+      this.step=target;
+    }
     else if(cmd==='back')this.step=Math.max(0,this.step-1);
     else if(cmd==='draft'){if(this.persist())ui.notifications.info('Draft saved on this browser.');return;}
     else if(cmd==='export'){this.exportDraft();return;}
@@ -140,12 +162,9 @@ export class CharacterCreator extends ApplicationV2 {
       } finally{this.busy=false;this.render({force:true});}
       return;
     }
-    else if(cmd==='add') {const d=this.catalogue.find(d=>d.id===button.dataset.id);if(d)addEntry(this.build,d);this.build.acknowledge=false;}
-    else if(cmd==='remove') {this.build.entries=this.build.entries.filter(e=>e.instance!==button.dataset.id);this.build.acknowledge=false;}
-    else if(cmd==='grant') {
-      const e=this.build.entries.find(e=>e.instance===button.dataset.id);
-      if(e.sources.includes('granted'))e.sources=['choice'];else e.sources=['granted'];this.build.acknowledge=false;
-    }
+    else if(cmd==='add') {const d=this.catalogue.find(d=>d.id===button.dataset.id);if(d)addAllowedEntry(this.build,d);this.build.acknowledge=false;}
+    else if(cmd==='remove') {removeAllowedEntry(this.build,button.dataset.id);this.build.acknowledge=false;}
+    else if(cmd==='grant') {throw new Error('Traits are granted by backstory packages. Make nonstandard adjustments on the native sheet.');}
     else if(cmd==='custom') {
       const root=this.element,name=root.querySelector('.mcc-custom-name').value.trim(),type=root.querySelector('.mcc-custom-type').value;
       const description=root.querySelector('.mcc-custom-description').value,set=root.querySelector('.mcc-custom-set').value.trim()||'basic';
@@ -154,7 +173,7 @@ export class CharacterCreator extends ApplicationV2 {
       if(type==='power'&&!validSets.includes(set))throw new Error('Unknown power-set key. Use one of: '+validSets.join(', '));
       const d={id:`custom:${uid()}`,name,type,sets:type==='power'?[set]:[],reviewed:false,source:'Custom option',description,
         item:{name,type,img:'icons/svg/book.svg',system:{description:`<p>${esc(description)}</p>`,...(type==='power'?{powerSets:[set]}:{})},effects:[]}};
-      this.catalogue.push(d);addEntry(this.build,d);this.build.acknowledge=false;
+      addAllowedEntry(this.build,d);this.catalogue.push(d);this.build.acknowledge=false;
     }
     else if(cmd==='save'||cmd==='copy') {
       if(this.step!==4)return;this.busy=true;await this.render({force:true});
@@ -168,6 +187,6 @@ export class CharacterCreator extends ApplicationV2 {
     }
     this.persist();this.render({force:true});
   }
-  error(error){console.error(`${ID} |`,error);ui.notifications.error(error.message??String(error),{permanent:true});}
+  error(error){if(!this.saved)this.render({force:true});console.error(`${ID} |`,error);ui.notifications.error(error.message??String(error),{permanent:true});}
   async close(options={}) {if(this.busy)return this;clearTimeout(this.refreshTimer);if(!this.saved)this.persist();return super.close(options);}
 }

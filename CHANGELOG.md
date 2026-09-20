@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.1
+
+- Fixed rank range at 1–6 and removed the optional rank cap.
+- Enforced ability caps, allocation budgets and complete ability spending before advancement or saving.
+- Rejected rank changes that invalidate existing allocations or options.
+- Disabled unavailable powers before selection; enforced power and trait budgets, thematic-bonus changes and known prerequisites.
+- Removed GM overrides and manual trait-grant shortcuts from the creator.
+- Corrected the minimum Health and Focus maxima to 10.
+- Added regression tests for the reported creation failures.
+
 ## 0.1.0
 
 Initial prototype for Foundry 13.

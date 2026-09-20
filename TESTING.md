@@ -1,8 +1,8 @@
-# Validation status — 0.1.0
+# Validation status — 0.1.1
 
 ## Completed
 
-- 38 automated Node tests pass: rules, provenance, prerequisite checks, drafts/imports, escaped interface rendering, native field mapping, permissions, source conflicts, edit preservation, recovery snapshots and simulated partial failure.
+- 55 automated Node tests pass: rules, provenance, prerequisite checks, drafts/imports, escaped interface rendering, native field mapping, permissions, source conflicts, edit preservation, recovery snapshots and simulated partial failure.
 - JavaScript files pass syntax checks.
 - Native field mappings and Item types were compared with the supported system source and sample character export.
 - Release ZIP contents, entry points, manifest asset paths and version consistency are checked before delivery.
@@ -38,3 +38,14 @@ Use a supported test world before updating campaign characters.
 14. Disable the module. Confirm the created character remains usable on the ordinary system sheet.
 
 If a save reports an incomplete operation, inspect the recovery copy before retrying. Consult the README for recovery and token reassignment considerations.
+
+## 0.1.1 regression checklist
+
+- At rank 1, attempt to type 22 into Melee: it must be rejected. Allocate 4 Melee and attempt 2 Agility: the second edit must be rejected.
+- Leave an ability point unspent and try Next or a later tab: advancement must be blocked.
+- At rank 5, Melee 10 must be rejected; Melee 8 is allowed within the budget. Attempt to reduce rank to 1 with Melee 8: rank must stay at 5 and explain the conflict.
+- At rank 1, Change of Plans must be unavailable even with Inspiration.
+- At rank 2, Change of Plans requires Inspiration; its prerequisite cannot be removed while it is selected.
+- Fill the power/trait allowance and attempt one extra selection. The option must be disabled and no negative remaining balance introduced.
+- Create a rank-1 character with Melee 2, Resilience 3 and Vigilance 0: Health must be 90 and Focus 10.
+- Confirm GM and player users receive the same hard-limit checks.

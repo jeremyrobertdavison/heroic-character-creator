@@ -8,8 +8,8 @@ export function newBuild() {
   return {schema:1,name:'New Hero',img:'icons/svg/mystery-man.svg',rank:1,rankCap:6,
     abilities:Object.fromEntries(ABILITIES.map(k=>[k,0])),identity:{codeName:'',realName:'',origin:'',occupation:''},
     originId:'',occupationId:'',entries:[],exchanges:{abilities:0,traits:0},
-    recalculate:true,resources:{health:0,focus:0,initiative:0,run:5,climb:3,swim:3,jump:3,karma:1},
-    acknowledge:false,override:''};
+    recalculate:true,resources:{health:10,focus:10,initiative:0,run:5,climb:3,swim:3,jump:3,karma:1},
+    acknowledge:false};
 }
 export function addEntry(build, definition, source='choice') {
   // Separate manual copies remain distinct. Grants share an existing identical catalogue entry.
@@ -36,21 +36,20 @@ export function setPackage(build, field, value, packages, catalogue) {
 }
 export function derived(build) {
   const a=build.abilities, run=5+Math.floor(Math.max(0,a.agility)/5);
-  // Nonpositive Health/Focus ability handling requires manual confirmation in this prototype.
-  return {health:Math.max(0,a.resilience*30),focus:Math.max(0,a.vigilance*30),initiative:a.vigilance,
+  // Core Rulebook p. 19: minimum maximum pool is 10, including zero/negative abilities.
+  return {health:Math.max(10,a.resilience*30),focus:Math.max(10,a.vigilance*30),initiative:a.vigilance,
     run,climb:Math.ceil(run/2),swim:Math.ceil(run/2),jump:Math.ceil(run/2),karma:build.rank};
 }
 export function evaluate(build) {
   const errors=[],warnings=[], add=(message)=>errors.push(message);
   if(!build.name?.trim()) add('Enter a character name.');
   if(!Number.isInteger(build.rank)||build.rank<1||build.rank>6) add('Rank must be a whole number from 1 to 6.');
-  if(!Number.isInteger(build.rankCap)||build.rankCap<build.rank||build.rankCap>6) add('Rank cap must be between the current rank and 6.');
   for(const [key,value] of Object.entries(build.exchanges)) if(!Number.isInteger(value)||value<0) add(`The ${key} exchange must be a nonnegative whole number.`);
   const abilityBudget=5*build.rank+build.exchanges.abilities;
   const abilitySpent=ABILITIES.reduce((sum,k)=>sum+Number(build.abilities[k]),0);
   for(const k of ABILITIES) {
     const v=build.abilities[k];
-    if(!Number.isInteger(v)||v< -3||v>build.rank+3) add(`${k}: use a whole number from -3 to ${build.rank+3}. Exceptional caps need a GM override.`);
+    if(!Number.isInteger(v)||v< -3||v>build.rank+3) add(`${k}: use a whole number from -3 to ${build.rank+3}.`);
   }
   if(abilitySpent>abilityBudget) add(`Ability points exceed the budget by ${abilitySpent-abilityBudget}.`);
   const powers=build.entries.filter(e=>e.definition.type==='power');
@@ -66,19 +65,19 @@ export function evaluate(build) {
   for(const {definition:d} of build.entries) {
     if(d.minRank && build.rank<d.minRank) add(`${d.name} requires rank ${d.minRank}.`);
     for(const id of d.requires??[]) if(!selected.has(id)) add(`${d.name} requires ${id.replace(/^starter:/,'').replaceAll('-',' ')}.`);
-    if(build.originId==='special-training'&&d.type==='power'&&((d.sets??[]).some(s=>s!=='basic'&&!allowed.has(s)) || ((d.sets??[]).every(s=>s==='basic') && d.trainingAllowed!==true))) add(`${d.name}: eligibility for Special Training must be resolved (or overridden by the GM).`);
+    if(build.originId==='special-training'&&d.type==='power'&&((d.sets??[]).some(s=>s!=='basic'&&!allowed.has(s)) || ((d.sets??[]).every(s=>s==='basic') && d.trainingAllowed!==true))) add(`${d.name}: eligibility for Special Training must be resolved.`);
     if(!d.reviewed) warnings.push(`${d.name}: prerequisites, grants and exceptions need manual review.`);
     if(d.type==='power' && (d.sets??[]).length>1) warnings.push(`${d.name}: multiple power-set membership needs manual budget review.`);
   }
   if(!build.identity.origin?.trim()) warnings.push('No origin entered.');
   if(!build.identity.occupation?.trim()) warnings.push('No occupation entered.');
   if(build.originId==='custom'||build.occupationId==='custom') warnings.push('Custom backstory: review all grants and restrictions manually.');
-  if(build.abilities.resilience<=0||build.abilities.vigilance<=0) warnings.push('Nonpositive Resilience or Vigilance: confirm Health/Focus with the rulebook and enter manual totals.');
   warnings.push('Prototype coverage: special caps, advanced set counting, conditional effects, static power/trait bonuses and full book eligibility are not fully automated.');
   const stats=build.recalculate?derived(build):build.resources;
   for(const key of ['health','focus','initiative','run','climb','swim','jump','karma']) {
     if(!Number.isInteger(stats[key]) || (key!=='initiative' && stats[key]<0)) add(`${key}: enter a valid whole-number total${key==='initiative'?'':' of at least zero'}.`);
   }
+  if(stats.health<10||stats.focus<10)add('Maximum Health and Focus must each be at least 10.');
   return {errors,warnings,abilityBudget,abilitySpent,abilityLeft:abilityBudget-abilitySpent,powerBudget,powerSpent,powerLeft:powerBudget-powerSpent,traitBudget,traits,traitLeft:traitBudget-traits,thematic,sets:[...sets],stats};
 }
 export function validateDraft(build) {
@@ -86,4 +85,62 @@ export function validateDraft(build) {
   if(!build.abilities||!build.identity||!build.exchanges||!build.resources) throw new Error('Incomplete creator draft.');
   for(const e of build.entries) if(!e.instance||!e.definition?.id||!['power','trait','tag'].includes(e.definition.type)||!Array.isArray(e.sources)) throw new Error('Invalid selection in draft.');
   return build;
+}
+
+// Shared enforcement for UI controls and programmatic actions. Drafts may be
+// incomplete, but ordinary edits cannot create overspending or illegal choices.
+export function allocationErrors(build, complete=false) {
+  const r=evaluate(build), errors=[];
+  if(!Number.isInteger(build.rank)||build.rank<1||build.rank>6)errors.push('Rank must be a whole number from 1 to 6.');
+  for(const k of ABILITIES)if(!Number.isInteger(build.abilities[k])||build.abilities[k]<-3||build.abilities[k]>build.rank+3)errors.push(`${k} must be between -3 and ${build.rank+3}.`);
+  if(r.abilityLeft<0)errors.push(`Reduce ability allocations by ${-r.abilityLeft} points.`);
+  if(complete&&r.abilityLeft>0)errors.push(`Spend all ${r.abilityLeft} remaining ability points before continuing.`);
+  return errors;
+}
+export function selectionErrors(build) {
+  return evaluate(build).errors.filter(e=>e.startsWith('Power picks')||e.startsWith('Discretionary traits')||e.includes(' requires ')||e.includes('eligibility for Special Training'));
+}
+export function additionErrors(build,definition) {
+  const candidate=clone(build);addEntry(candidate,definition);
+  return selectionErrors(candidate);
+}
+export function applyAbility(build,key,value) {
+  if(!ABILITIES.includes(key)||!Number.isInteger(value)||value< -3||value>build.rank+3)throw new Error(`Ability scores must be whole numbers from -3 to ${build.rank+3} (rank + 3).`);
+  const r=evaluate(build),total=r.abilitySpent-build.abilities[key]+value;
+  if(total>r.abilityBudget && value>=build.abilities[key])throw new Error(`Only ${Math.max(0,r.abilityLeft)} ability points remain. Reduce another score first.`);
+  build.abilities[key]=value;
+}
+export function abilityMaximum(build,key) {
+  const r=evaluate(build);return Math.min(build.rank+3,r.abilityBudget-r.abilitySpent+build.abilities[key]);
+}
+export function applyRank(build,value) {
+  if(!Number.isInteger(value)||value<1||value>6)throw new Error('Rank must be a whole number from 1 to 6.');
+  const candidate=clone(build);candidate.rank=value;candidate.rankCap=6;
+  const errors=[...allocationErrors(candidate),...selectionErrors(candidate)];
+  if(errors.length)throw new Error(`Rank unchanged. Adjust your abilities and selected options before changing to rank ${value}: ${errors.join(' ')}`);
+  build.rank=value;build.rankCap=6;
+}
+export function applyExchange(build,key,value) {
+  if(!['abilities','traits'].includes(key)||!Number.isInteger(value)||value<0)throw new Error('Exchanged picks must be nonnegative whole numbers.');
+  const candidate=clone(build);candidate.exchanges[key]=value;
+  const errors=[...allocationErrors(candidate),...selectionErrors(candidate)];
+  if(errors.length)throw new Error(errors.join(' '));
+  build.exchanges[key]=value;
+}
+export function addAllowedEntry(build,definition) {
+  const errors=additionErrors(build,definition);if(errors.length)throw new Error(errors.join(' '));
+  return addEntry(build,definition);
+}
+export function removeAllowedEntry(build,instance) {
+  const entry=build.entries.find(e=>e.instance===instance);
+  if(entry?.sources.some(s=>s==='origin'||s==='occupation'))throw new Error('Change the backstory package to remove its grant.');
+  const candidate=clone(build);candidate.entries=candidate.entries.filter(e=>e.instance!==instance);
+  const previous=new Set(selectionErrors(build));
+  const errors=selectionErrors(candidate).filter(e=>!previous.has(e));if(errors.length)throw new Error(errors.join(' '));
+  build.entries=candidate.entries;
+}
+export function navigationErrors(build,current,target) {
+  if(target>1) return allocationErrors(build,true);
+  if(target>current&&current===1)return allocationErrors(build,true);
+  return [];
 }

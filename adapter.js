@@ -1,4 +1,4 @@
-import {ID,LEGACY_ID,ABILITIES,clone,newBuild,derived,evaluate,uid} from './rules.js';
+import {ID,LEGACY_ID,ABILITIES,clone,newBuild,derived,evaluate,uid,allocationErrors} from './rules.js';
 export function fingerprint(actor) {return JSON.stringify(actor.toObject());}
 export function definitionFromItem(item, source='Existing character') {
   const raw=typeof item.toObject==='function'?item.toObject():clone(item);
@@ -10,7 +10,7 @@ export function definitionFromItem(item, source='Existing character') {
 export function fromActor(actor) {
   const raw=actor.toObject(), saved=raw.flags?.[ID]?.build??raw.flags?.[LEGACY_ID]?.build, build=newBuild();
   if(saved?.schema===1) Object.assign(build,clone(saved));
-  build.name=raw.name;build.img=raw.img;build.rank=raw.system.rank;build.rankCap=Math.max(build.rank,build.rankCap);
+  build.name=raw.name;build.img=raw.img;build.rank=raw.system.rank;build.rankCap=6;
   build.identity=clone(raw.system.identity);
   build.abilities=Object.fromEntries(ABILITIES.map(k=>[k,raw.system.abilities[k].value]));
   const existing=new Map((saved?.entries??[]).map(e=>[e.itemId,e]));
@@ -24,7 +24,7 @@ export function fromActor(actor) {
   if(!saved) {build.originId=raw.system.identity.origin?'custom':'';build.occupationId=raw.system.identity.occupation?'custom':'';}
   build.resources={health:raw.system.lifepool.health.max,focus:raw.system.lifepool.focus.max,
     initiative:raw.system.initiative.value,...Object.fromEntries(['run','climb','swim','jump'].map(k=>[k,raw.system.speed[k]])),karma:raw.system.karma};
-  build.recalculate=false;build.acknowledge=false;build.override='';
+  build.recalculate=false;build.acknowledge=false;delete build.override;
   return build;
 }
 export function planChanges(build, actor=null) {
@@ -72,7 +72,8 @@ export async function commit(build, actor, baseline, {copy=false}={}) {
   if(!build.name?.trim()) throw new Error('Enter a character name.');
   if(!Number.isInteger(build.rank)||build.rank<1||build.rank>6||ABILITIES.some(k=>!Number.isInteger(build.abilities[k]))) throw new Error('Rank and ability scores must be valid whole numbers; rank must be 1–6.');
   const result=evaluate(build);
-  if(result.errors.length&&!(game.user.isGM&&build.override.trim())) throw new Error(result.errors.join('\n'));
+  const errors=[...result.errors,...allocationErrors(build,true)];
+  if(errors.length) throw new Error([...new Set(errors)].join('\n'));
   if(!build.acknowledge) throw new Error('Acknowledge the manual rule review on the Review tab.');
   if(actor&&fingerprint(actor)!==baseline) throw new Error('This character changed after you opened the creator. Close and reopen it before saving; export your draft to retain your choices.');
   const plan=planChanges(build,actor), finalBuild=clone(build);

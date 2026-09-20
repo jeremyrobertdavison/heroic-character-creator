@@ -50,15 +50,22 @@ test('save as new leaves original unchanged and preserves existing current pools
  setup();const a=new FakeActor(fixture()),base=fingerprint(a),b=ready(a);b.name='Copy test';const r=await commit(b,a,base,{copy:true});
  assert.equal(fingerprint(a),base);assert.equal(r.actor.name,'Copy test (Copy)');assert.equal(r.actor.system.lifepool.health.value,33);assert.equal(r.backup,null);
 });
-test('budget errors require explicit GM exception',async()=>{
- setup();const b=newBuild();b.abilities.melee=10;b.acknowledge=true;await assert.rejects(commit(b,null,null),/melee/);b.override='Custom GM-approved cap and allocation';await commit(b,null,null);
+test('GM exception cannot bypass hard creation limits',async()=>{
+ setup();const b=newBuild();b.abilities.melee=10;b.acknowledge=true;await assert.rejects(commit(b,null,null),/melee/);b.override='Custom GM-approved cap and allocation';await assert.rejects(commit(b,null,null),/melee/);
 });
 test('ordinary players cannot use an imported GM override to bypass checks',async()=>{
  setup();game.user.isGM=false;const b=newBuild();b.abilities.melee=10;b.override='GM';b.acknowledge=true;await assert.rejects(commit(b,null,null),/melee/);
 });
-test('missing manual review acknowledgment blocks save',async()=>{setup();await assert.rejects(commit(newBuild(),null,null),/Acknowledge/);});
+test('missing manual review acknowledgment blocks save',async()=>{setup();const b=newBuild();b.abilities.resilience=2;b.abilities.vigilance=3;await assert.rejects(commit(b,null,null),/Acknowledge/);});
 test('invalid numeric data cannot be overridden',async()=>{setup();const b=newBuild();b.rank=NaN;b.override='exception';b.acknowledge=true;await assert.rejects(commit(b,null,null),/whole numbers/);});
 test('renamed module reads earlier prototype build provenance',()=>{
  const raw=fixture();raw.flags['mvrpg-character-creator']={build:{schema:1,entries:[{itemId:'custom',instance:'legacy-instance',sources:['granted'],definition:{id:'old:trait',name:'Legacy Trait',type:'trait',item:raw.items[0]}}],exchanges:{abilities:1,traits:0}}};
  const b=fromActor(new FakeActor(raw));assert.equal(b.entries[0].instance,'legacy-instance');assert.deepEqual(b.entries[0].sources,['granted']);assert.equal(b.exchanges.abilities,1);
+});
+test('final save blocks unspent ability points even if UI navigation is bypassed',async()=>{
+ setup();const b=newBuild();b.acknowledge=true;await assert.rejects(commit(b,null,null),/Spend all 5/);assert.equal(created.length,0);
+});
+test('Jeremy allocation writes positive starting Focus at Vigilance zero',async()=>{
+ setup();const b=newBuild();b.abilities.melee=2;b.abilities.resilience=3;b.acknowledge=true;const r=await commit(b,null,null);
+ assert.equal(r.actor.system.lifepool.focus.max,10);assert.equal(r.actor.system.lifepool.focus.value,10);assert.equal(r.actor.system.lifepool.health.max,90);
 });

@@ -52,7 +52,7 @@ test('ordinary derived totals and movement rounding',()=>{
  assert.deepEqual(derived(b),{health:60,focus:90,initiative:3,run:6,climb:3,swim:3,jump:3,karma:1});
  b.abilities.agility=0;assert.equal(derived(b).climb,3);
 });
-test('nonpositive life-pool abilities are flagged for manual review',()=>{assert.match(evaluate(newBuild()).warnings.join(),/Nonpositive/);});
+test('zero abilities still give minimum Health and Focus of 10',()=>{const r=evaluate(newBuild());assert.equal(r.stats.health,10);assert.equal(r.stats.focus,10);});
 test('invalid draft structures are rejected',()=>{assert.throws(()=>validateDraft({schema:1,entries:[]}));assert.throws(()=>validateDraft({...newBuild(),schema:2}));});
 test('starter catalogue has resolvable prerequisites and valid native types',()=>{
  const ids=new Set(STARTER.map(x=>x.id));assert.equal(ids.size,STARTER.length);
