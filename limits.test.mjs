@@ -36,7 +36,7 @@ test('Change of Plans blocked at rank 1 even with Inspiration; valid at rank 2',
  const b=newBuild();addAllowedEntry(b,find('Inspiration'));assert.throws(()=>addAllowedEntry(b,find('Change of Plans')),/rank 2/);applyRank(b,2);addAllowedEntry(b,find('Change of Plans'));assert.equal(b.entries.length,2);
 });
 test('missing prerequisite prevents selection and removing it is blocked',()=>{
- const b=newBuild();applyRank(b,2);assert(additionErrors(b,find('Change of Plans')).some(e=>e.includes('inspiration')));addAllowedEntry(b,find('Inspiration'));addAllowedEntry(b,find('Change of Plans'));const source=b.entries[0].instance;assert.throws(()=>removeAllowedEntry(b,source),/requires/);assert.equal(b.entries.length,2);
+ const b=newBuild();applyRank(b,2);assert(additionErrors(b,find('Change of Plans')).some(e=>e.toLowerCase().includes('inspiration')));addAllowedEntry(b,find('Inspiration'));addAllowedEntry(b,find('Change of Plans'));const source=b.entries[0].instance;assert.throws(()=>removeAllowedEntry(b,source),/requires/);assert.equal(b.entries.length,2);
 });
 test('rank reduction cannot retain a higher-rank power',()=>{
  const b=newBuild();applyRank(b,2);addAllowedEntry(b,find('Inspiration'));addAllowedEntry(b,find('Change of Plans'));assert.throws(()=>applyRank(b,1),/requires rank 2/);assert.equal(b.rank,2);

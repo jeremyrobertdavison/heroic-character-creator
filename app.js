@@ -1,5 +1,5 @@
-import {ID,LEGACY_ID,clone,uid,newBuild,addEntry,setPackage,validateDraft,derived,applyAbility,applyRank,applyExchange,addAllowedEntry,removeAllowedEntry,navigationErrors,selectionErrors} from './rules.js';
-import {STARTER,ORIGINS,OCCUPATIONS} from './catalogue.js';
+import {ID,LEGACY_ID,clone,uid,newBuild,addEntry,setPackage,validateDraft,derived,applyAbility,applyRank,applyExchange,addAllowedEntry,removeAllowedEntry,navigationErrors,selectionErrors,syncPackageBenefits} from './rules.js';
+import {CATALOGUE,ORIGINS,OCCUPATIONS,POWER_SET_LABELS} from './catalogue.js';
 import {fromActor,fingerprint,definitionFromItem,planChanges,commit} from './adapter.js';
 import {renderView,esc} from './view.js';
 const {ApplicationV2}=foundry.applications.api;
@@ -7,8 +7,8 @@ export class CharacterCreator extends ApplicationV2 {
   static DEFAULT_OPTIONS={id:'heroic-character-creator-{id}',classes:['mcc-app'],tag:'section',window:{title:'Heroic Character Creator',resizable:true},position:{width:980,height:810}};
   constructor(actor=null) {
     super();this.actor=actor;this.baseline=actor?fingerprint(actor):null;
-    this.build=actor?fromActor(actor):newBuild();this.catalogue=clone(STARTER);this.step=0;this.busy=false;
-    this.recovering=false;this.saved=false;this.fileControllers=[];
+    this.build=actor?fromActor(actor):newBuild();this.catalogue=clone(CATALOGUE);this.step=0;this.busy=false;
+    this.filters={q:'',type:'',set:'',available:false};this.recovering=false;this.saved=false;this.fileControllers=[];
     for(const e of this.build.entries) if(!this.catalogue.some(d=>d.id===e.definition.id)) this.catalogue.push(clone(e.definition));
   }
   get draftKey(){return `${ID}:${game.world.id}:${game.user.id}:${this.actor?.id??'new'}`;}
@@ -19,6 +19,7 @@ export class CharacterCreator extends ApplicationV2 {
       if(value!==old) changes.push(`${key.replace(/^system\./,'')}: ${old===undefined?'—':old} → ${value}`);
     }
     for(const a of plan.add) changes.push(`Add ${a.item.type}: ${a.item.name}`);
+    for(const item of plan.itemUpdates??[])changes.push(`Update option details: ${item.name}`);
     for(const id of plan.remove) changes.push(`Remove: ${raw.items.find(i=>i._id===id)?.name??id}`);
     return changes;
   }
@@ -68,9 +69,10 @@ export class CharacterCreator extends ApplicationV2 {
       }
       if(el.matches('.mcc-options-file')) this.readFile(el, false).catch(e=>this.error(e));
       if(el.matches('.mcc-draft-file')) this.readFile(el, true).catch(e=>this.error(e));
-      if(el.matches('.mcc-filter'))this.filter();
+      if(el.matches('.mcc-filter,.mcc-set-filter,.mcc-available-filter'))this.filter();
     });
     root.querySelector('.mcc-search')?.addEventListener('input',()=>this.filter());
+    if(root.querySelector('.mcc-search')){root.querySelector('.mcc-search').value=this.filters.q;root.querySelector('.mcc-filter').value=this.filters.type;root.querySelector('.mcc-set-filter').value=this.filters.set;root.querySelector('.mcc-available-filter').checked=this.filters.available;this.filter();}
     root.addEventListener('dragover',event=>event.preventDefault());
     root.addEventListener('drop',async event=>{
       event.preventDefault();if(this.busy)return;
@@ -84,8 +86,32 @@ export class CharacterCreator extends ApplicationV2 {
     });
   }
   filter() {
-    const q=this.element.querySelector('.mcc-search')?.value.toLowerCase()??'',type=this.element.querySelector('.mcc-filter')?.value??'';
-    for(const row of this.element.querySelectorAll('.mcc-option'))row.hidden=(!row.dataset.search.includes(q))||(type&&row.dataset.type!==type);
+    const root=this.element;
+    const q=root.querySelector('.mcc-search')?.value.toLowerCase()??'',type=root.querySelector('.mcc-filter')?.value??'',set=root.querySelector('.mcc-set-filter')?.value??'',available=root.querySelector('.mcc-available-filter')?.checked??false;
+    this.filters={q,type,set,available};let visible=0;
+    for(const row of root.querySelectorAll('.mcc-option')){row.hidden=!row.dataset.search.includes(q)||(type&&row.dataset.type!==type)||(set&&!row.dataset.sets.split(',').includes(set))||(available&&row.dataset.blocked==='true');if(!row.hidden)visible++;}
+    const count=root.querySelector('.mcc-result-count');if(count)count.textContent=`${visible} options shown`;
+  }
+  async configureOption(original) {
+    const d=clone(original);
+    if(!d.detailPrompt&&(d.sets??[]).length<2)return d;
+    const choices=d.detailType==='origin'?ORIGINS.filter(p=>p.id!=='custom'):d.detailType==='occupation'?OCCUPATIONS.filter(p=>p.id!=='custom'):d.detailType==='power'?this.catalogue.filter(p=>p.type==='power'):null;
+    const elements=['Air','Earth','Electricity','Energy','Fire','Force','Hellfire','Ice','Iron','Sound','Water'];
+    let content='';
+    if(choices)content+=`<label>${esc(d.detailPrompt)}<select name="choice">${choices.map(p=>`<option value="${esc(p.id)}" ${[d.packageId,d.surprisingPowerId].includes(p.id)?'selected':''}>${esc(p.name)}</option>`).join('')}</select></label>`;
+    else if(d.detailType==='element')content+=`<label>Element<select name="detail">${elements.map(e=>`<option ${d.detail===e?'selected':''}>${e}</option>`).join('')}</select></label>`;
+    else if(d.detailType==='weapon')content+=`<label>Weapon type<select name="detail">${['Blunt','Sharp'].map(e=>`<option ${d.detail===e?'selected':''}>${e}</option>`).join('')}</select></label>`;
+    else if(d.detailPrompt)content+=`<label>${esc(d.detailPrompt)}<input name="detail" value="${esc(d.detail??'')}" required maxlength="200"></label>`;
+    if((d.sets??[]).length>1)content+=`<label>Power set used for this build<select name="set">${d.sets.map(v=>`<option value="${v}" ${d.budgetSet===v?'selected':''}>${esc(POWER_SET_LABELS[v]??v)}</option>`).join('')}</select></label>`;
+    if(d.detailType==='origin')content+='<p>Extraordinary origins require GM agreement. Choose the final character/form rank on Identity.</p>';
+    const result=await foundry.applications.api.DialogV2.prompt({window:{title:`Configure ${d.baseName??d.name}`},content,ok:{label:'Apply choice',callback:(_e,b)=>Object.fromEntries(new FormData(b.form))},rejectClose:false});
+    if(!result)return null;
+    if(choices){const choice=choices.find(p=>p.id===result.choice);if(!choice)throw Error('Choose a valid benefit.');if(d.detailType==='power')d.surprisingPowerId=choice.id;else d.packageId=choice.id;d.detail=choice.name;}
+    else if(d.detailPrompt){d.detail=String(result.detail??'').trim();if(!d.detail)throw Error('Enter the required detail.');if(d.detailType==='weapon'&&!['Blunt','Sharp'].includes(d.detail))throw Error('Choose blunt or sharp.');if(d.detailType==='element'&&!elements.includes(d.detail))throw Error('Choose a valid element.');}
+    if(result.set){if(!d.sets.includes(result.set))throw Error('Invalid power set.');d.budgetSet=result.set;}
+    d.baseName??=d.name;
+    if(d.detail){d.name=`${d.baseName}: ${d.detail}`;d.item.name=d.name;const canonical=this.catalogue.find(v=>v.id===d.id);d.item.system.description=(canonical?.item.system.description??d.item.system.description)+`<p><strong>Character choice:</strong> ${esc(d.detail)}</p>`;}
+    return d;
   }
   persist() {
     try{localStorage.setItem(this.draftKey,JSON.stringify({format:ID,schema:1,actorUuid:this.actor?.uuid??null,baseline:this.baseline,build:this.build,savedAt:Date.now()}));return true;}
@@ -162,7 +188,9 @@ export class CharacterCreator extends ApplicationV2 {
       } finally{this.busy=false;this.render({force:true});}
       return;
     }
-    else if(cmd==='add') {const d=this.catalogue.find(d=>d.id===button.dataset.id);if(d)addAllowedEntry(this.build,d);this.build.acknowledge=false;}
+    else if(cmd==='sync-packages'){const candidate=clone(this.build);syncPackageBenefits(candidate,this.catalogue);const errors=selectionErrors(candidate);if(errors.length)throw Error(errors.join(' '));this.build=candidate;this.build.acknowledge=false;}
+    else if(cmd==='add') {const original=this.catalogue.find(d=>d.id===button.dataset.id);if(!original)return;const d=await this.configureOption(original);if(!d)return;addAllowedEntry(this.build,d);this.build.acknowledge=false;}
+    else if(cmd==='configure') {const entry=this.build.entries.find(e=>e.instance===button.dataset.id);if(!entry)return;const d=await this.configureOption(entry.definition);if(!d)return;const candidate=clone(this.build);candidate.entries.find(e=>e.instance===entry.instance).definition=d;if(entry.itemId)candidate.entries.find(e=>e.instance===entry.instance).choiceEdited=true;syncPackageBenefits(candidate,this.catalogue);const previous=new Set(selectionErrors(this.build)),errors=selectionErrors(candidate).filter(e=>!previous.has(e));if(errors.length)throw Error(errors.join(' '));this.build=candidate;this.build.acknowledge=false;}
     else if(cmd==='remove') {removeAllowedEntry(this.build,button.dataset.id);this.build.acknowledge=false;}
     else if(cmd==='grant') {throw new Error('Traits are granted by backstory packages. Make nonstandard adjustments on the native sheet.');}
     else if(cmd==='custom') {

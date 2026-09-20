@@ -35,7 +35,7 @@ async function effect(actor,kind,source,{timed=false,changes=[]}={}){
     flags:{[ID]:{kind,sourceActor:source.uuid,combatId:combat?.id??null,round:combat?.round??null,turn:combat?.turn??null}}}]);
 }
 async function removeKind(actor,kind){const ids=activeEffects(actor).filter(e=>e.flags[ID].kind===kind).map(e=>e.id);if(ids.length)await actor.deleteEmbeddedDocuments('ActiveEffect',ids);}
-async function spend(actor,cost){if(!cost)return;const n=actor.system.lifepool.focus.value;if(n<=0||n<cost)throw Error('Not enough Focus.');await actor.update({'system.lifepool.focus.value':n-cost});}
+async function spend(actor,cost){if(!cost)return;const n=actor.system.lifepool.focus.value;if(n<=cost||cost>5*actor.system.rank)throw Error('Not enough Focus: keep at least 1 Focus and spend at most five times rank.');await actor.update({'system.lifepool.focus.value':n-cost});}
 async function damage(actor,amount){if(amount>0)await actor.update({'system.lifepool.health.value':Math.max(0,actor.system.lifepool.health.value-amount)});}
 async function refreshRoll(message,roll,updates={}){
   roll.options.edges=roll.edges;roll.options.troubles=roll.troubles;roll.options.rerolls=roll.rerolls;
@@ -101,7 +101,7 @@ async function attack(actor,d,bonusMessage=null,basic=null){
   return msg;
 }
 export async function usePower(actor,id){
-  gm();const d=definition(id);validatePower(actor,d);const key=keyOf(d);
+  gm();const d=definition(id);if(d?.automationMode==='reference')throw Error('This power has rules-reference coverage. Resolve it manually; no effects or Focus are changed.');validatePower(actor,d);const key=keyOf(d);
   return locked('gm-mutation',async()=>{
     if(['sniping','snap-shooting','weapons-blazing'].includes(key))return attack(actor,d);
     if(['slow-motion-dodge','change-of-plans'].includes(key))return reaction(actor,d);
@@ -168,7 +168,7 @@ export async function upgradeContent(actor){
     try{
       await actor.updateEmbeddedDocuments('Item',changes);
       const build=structuredClone(actor.getFlag(ID,'build'));
-      if(build){for(const e of build.entries){const d=definition(e.definition.id);if(d&&changes.some(c=>c._id===e.itemId))e.definition=structuredClone(d);}await actor.setFlag(ID,'build',build);}
+      if(build){for(const e of build.entries){const d=definition(e.definition.id);if(d&&changes.some(c=>c._id===e.itemId))e.definition={...structuredClone(d),...Object.fromEntries(['detail','detailType','packageId','surprisingPowerId','budgetSet','baseName','name'].filter(k=>e.definition[k]!==undefined).map(k=>[k,e.definition[k]]))};}await actor.setFlag(ID,'build',build);}
       await actor.setFlag(ID,'contentVersion',CONTENT_VERSION);
       ui.notifications.info(`Updated ${changes.length} Items. Recovery: ${recovery.name}.`);
     }catch(e){throw Error(`Update interrupted. Recovery: ${recovery.name}. ${e.message}`);}
@@ -180,7 +180,7 @@ export class HeroicActions extends ApplicationV2 {
   async _renderHTML(){
     const actor=this.actor,items=Array.from(actor.items).map(i=>({i,d:definition(catalogueId(i,actor))})).filter(x=>x.d);
     const button=(cmd,label,data='')=>`<button type="button" data-heroic-cmd="${cmd}" ${data}>${label}</button>`;
-    return `<div class="hcc-actions"><h2>${esc(actor.name)}</h2><p>Health ${actor.system.lifepool.health.value}/${actor.system.lifepool.health.max} · Focus ${actor.system.lifepool.focus.value}/${actor.system.lifepool.focus.max}</p><p>Use this panel for included conditional benefits. Standard sheet rolls do not apply those benefits. The GM confirms actions, triggers, hearing and range; target tokens before resolving powers.</p><h3>Ability checks</h3><div class="hcc-buttons">${ABILITIES.map(a=>button('ability',esc(a),`data-key="${a}"`)).join('')}</div><p>Melee: close combat; Agility: ranged combat and coordination; Resilience: endurance; Vigilance: awareness; Ego: will and influence; Logic: reasoning. Checks use the system’s noncombat score; defenses are 10 + ability + bonuses.</p>${game.user.isGM?`<div class="hcc-buttons">${button('basic','Close attack', 'data-key="melee"')}${button('basic','Ranged attack','data-key="agility"')}${button('upgrade','Update included content')}${owns(actor,'heroic')?button('karma','After rest: reset Karma'):''}</div>`:''}<h3>Included powers, traits and tags</h3>${items.map(({d})=>`<article><details><summary><strong>${esc(d.name)}</strong></summary>${d.item.system.description}</details>${d.type==='power'?button(game.user.isGM?'power':'request',game.user.isGM?'Use / resolve':'Request in chat',`data-key="${esc(d.id)}"`):d.id.includes('connections-')?button('ability','Ask contact: Ego check','data-key="ego"'):''}</article>`).join('')||'<p>No creator-linked included content. Use the creator to add included options. Existing imported Items retain their native behavior.</p>'}<h3>Active module effects</h3>${activeEffects(actor).map(e=>`<p>${esc(e.name)} ${game.user.isGM?button('end','End',`data-key="${e.id}"`):''}</p>`).join('')||'<p>None.</p>'}<p>Timed ally benefits expire at the source’s next turn or combat end. End concentration when interrupted. Bleeding’s recurring damage and recovery require GM resolution.</p>${button('refresh','Refresh')}</div>`;
+    return `<div class="hcc-actions"><h2>${esc(actor.name)}</h2><p>Health ${actor.system.lifepool.health.value}/${actor.system.lifepool.health.max} · Focus ${actor.system.lifepool.focus.value}/${actor.system.lifepool.focus.max}</p><p>Use this panel for included conditional benefits. Standard sheet rolls do not apply those benefits. The GM confirms actions, triggers, hearing and range; target tokens before resolving powers.</p><h3>Ability checks</h3><div class="hcc-buttons">${ABILITIES.map(a=>button('ability',esc(a),`data-key="${a}"`)).join('')}</div><p>Melee: close combat; Agility: ranged combat and coordination; Resilience: endurance; Vigilance: awareness; Ego: will and influence; Logic: reasoning. Checks use the system’s noncombat score; defenses are 10 + ability + bonuses.</p>${game.user.isGM?`<div class="hcc-buttons">${button('basic','Close attack', 'data-key="melee"')}${button('basic','Ranged attack','data-key="agility"')}${button('upgrade','Update included content')}${owns(actor,'heroic')?button('karma','After rest: reset Karma'):''}</div>`:''}<h3>Included powers, traits and tags</h3>${items.map(({i,d})=>`<article><details><summary><strong>${esc(i.name??d.name)}</strong></summary>${d.item.system.description}</details>${d.automationMode==='reference'?button('reference','Post rules to chat',`data-key="${esc(d.id)}"`):d.type==='power'?button(game.user.isGM?'power':'request',game.user.isGM?'Use / resolve':'Request in chat',`data-key="${esc(d.id)}"`):d.id.includes('connections-')?button('ability','Ask contact: Ego check','data-key="ego"'):''}</article>`).join('')||'<p>No creator-linked included content. Use the creator to add included options. Existing imported Items retain their native behavior.</p>'}<h3>Active module effects</h3>${activeEffects(actor).map(e=>`<p>${esc(e.name)} ${game.user.isGM?button('end','End',`data-key="${e.id}"`):''}</p>`).join('')||'<p>None.</p>'}<p>Timed ally benefits expire at the source’s next turn or combat end. End concentration when interrupted. Bleeding’s recurring damage and recovery require GM resolution.</p>${button('refresh','Refresh')}</div>`;
   }
   _replaceHTML(html,content){content.innerHTML=html;}
   _onRender(context,options){super._onRender(context,options);this.element.querySelector('.hcc-actions').addEventListener('click',async event=>{
@@ -188,6 +188,7 @@ export class HeroicActions extends ApplicationV2 {
     try{
       const key=b.dataset.key,cmd=b.dataset.heroicCmd;owner(this.actor);
       if(cmd==='ability')await abilityCheck(this.actor,key);
+      else if(cmd==='reference'){const d=definition(key);if(d)await note(this.actor,d.name,d.item.system.description);}
       else if(cmd==='power')await usePower(this.actor,key);
       else if(cmd==='basic'){gm();await locked('gm-mutation',()=>attack(this.actor,{id:`starter:${key}`,name:`${key} attack`},null,key));}
       else if(cmd==='upgrade')await upgradeContent(this.actor);

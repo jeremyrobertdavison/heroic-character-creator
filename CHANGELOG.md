@@ -1,3 +1,15 @@
+# 0.3.0 — Core catalogue expansion
+
+- Expanded to 321 powers, 57 traits, 48 tags, 30 origins and 18 occupations, plus package-specific label variants.
+- Added known rank/power/tag prerequisites, alternatives and numbered chains.
+- Added all origin/occupation packages, paid required origin powers and extra-package traits.
+- Added specialization dialogs, power-set filters and an available-only filter.
+- Added scoped Surprising Power choices without changing character rank or ability caps.
+- Preserved original starter IDs, existing automation and recovery-backed edits.
+- Kept new combat effects explicitly manual, with rules-to-chat controls.
+- Corrected automated Focus spending to leave at least 1 Focus and obey the rank-based spending limit.
+- Expanded validation to 102 passing tests. Live Foundry testing remains required.
+
 # 0.2.0 — Included rules and Heroic Actions
 
 - Added core rule information and page references for the 11 included powers, three traits and two tags.

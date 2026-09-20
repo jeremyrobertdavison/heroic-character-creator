@@ -2,7 +2,7 @@
 
 A guided superhero character creator and editor for Foundry Virtual Tabletop 13.
 
-**Version 0.2.0 is a prototype.** It provides a usable creation workflow, core budget checks, a small starter catalogue, native Item imports, and GM editing with recovery copies. It does **not** contain the complete core-rulebook catalogue or enforce every character-creation exception. Every build requires manual rules review.
+**Version 0.3.0** includes the core catalogue: **321 powers, 57 traits, 48 tags, 30 origins and 18 occupations**. It checks creation budgets, known prerequisites and package grants, and preserves existing Items during supported edits. Selected powers have GM-assisted automation; newly added entries provide rules references for manual gameplay resolution. See [catalogue coverage](docs/CORE-CATALOGUE.md).
 
 ## Requirements
 
@@ -59,14 +59,13 @@ Use an Actor from the directory. Unlinked token Actors and the `npc` type are no
 
 No live character changes occur until a save. Granted options show their source. Package grants are changed through Backstory. A manually selected option that is also granted by a package remains selected when that package is removed.
 
-### Included starter content
+### Included core content
 
-- Special Training origin with its Determination grant.
-- Adventurer occupation with Fearless, Connections: Super Heroes or Villains, and Black Market Access.
-- Heroic tag.
-- Eleven example powers: Inspiration, Slow-Motion Dodge, Attack Stance, Counterstrike Technique, Defense Stance, Unflappable Poise, Sniping, Snap Shooting, Weapons Blazing, Change of Plans, and Combat Support.
+All core-book origins, occupations, traits, tags and power descriptions are available in the creator, with printed-page references. Origin and occupation variants are separate choices. Numbered powers retain their prerequisite chains. Search by name, category, power set, or current availability.
 
-The included powers, traits and tags now carry core rule information and printed-page references checked against the supplied PDF. **Heroic Actions** provides GM-assisted use, Focus costs, native rolls, stances, timed ally benefits, reactions and special damage. Each entry describes its automation coverage. See [Heroic Actions](docs/HEROIC-ACTIONS.md) for the coverage table and workflow. Imported content remains subject to manual review.
+Package traits and tags are free grants; required powers and their prerequisites consume picks. Additional origins and occupations are configured through the appropriate traits. Customize elemental types, weapon types and other required details on Options.
+
+The original eleven Heroic Actions workflows remain available. Newly added entries offer **Post rules to chat** and require manual effect resolution. This includes their static bonuses. See [the complete catalogue guide](docs/CORE-CATALOGUE.md), [inventory](docs/CORE-INVENTORY.md), and [action coverage](docs/HEROIC-ACTIONS.md).
 
 ### Importing your own content
 
@@ -115,7 +114,7 @@ Drafts are not world backups. Clearing browser data removes local drafts. Existi
 
 ## Safe editing and recovery
 
-Existing-character updates are GM-only in 0.2.0. Before writing, the module:
+Existing-character updates are GM-only in 0.3.0. Before writing, the module:
 
 1. Checks ownership, actor type, and source data for intervening changes.
 2. Creates a recovery Actor with no player ownership in **Character Creator — Recovery**.

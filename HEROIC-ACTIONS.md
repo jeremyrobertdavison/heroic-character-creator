@@ -1,6 +1,6 @@
-# Heroic Actions — version 0.2.0
+# Heroic Actions — version 0.3.0
 
-This release adds rule information and a GM-assisted action workflow for the existing 11 powers, three traits and two tags. It targets Foundry 13 with system version 3.0.1. It has automated tests and source compatibility checks; live-world testing is still required.
+This guide describes the automated subset retained from 0.2.0: 11 powers and selected trait/tag benefits. The complete core catalogue is now included; newly added effects remain manual. See [Core catalogue](CORE-CATALOGUE.md). It targets Foundry 13 with system version 3.0.1. It has automated tests and source compatibility checks; live-world testing is still required.
 
 ## Start here
 

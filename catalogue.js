@@ -45,7 +45,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "Applies a timed edge to Heroic Actions checks. The GM confirms hearing and action availability.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "automated"
   },
   {
     "id": "starter:slow-motion-dodge",
@@ -93,7 +94,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "Adds trouble to a selected, unresolved native attack roll before rerolls. The GM confirms the trigger.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "automated"
   },
   {
     "id": "starter:attack-stance",
@@ -141,7 +143,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "Applies a native Active Effect to Melee damage. End concentration using Heroic Actions.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "automated"
   },
   {
     "id": "starter:counterstrike-technique",
@@ -191,7 +194,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "Deducts Focus and applies half the regular damage entered by the GM to the selected attacker.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "automated"
   },
   {
     "id": "starter:defense-stance",
@@ -239,7 +243,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "Tracks the stance. Its trouble is applied to close attacks made through Heroic Actions; use End after a successful attack from outside this workflow.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "automated"
   },
   {
     "id": "starter:unflappable-poise",
@@ -287,7 +292,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "Adds trouble to close attacks against this character through Heroic Actions, with double trouble during Defense Stance.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "automated"
   },
   {
     "id": "starter:sniping",
@@ -336,7 +342,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "Checks the GM-entered distance, deducts Focus, rolls Agility, and applies regular or triple damage after GM resolution.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "automated"
   },
   {
     "id": "starter:snap-shooting",
@@ -384,7 +391,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "One roll for up to two targets; applies half/full damage and a bleeding marker. Bleeding’s ongoing damage and recovery are manual.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "automated"
   },
   {
     "id": "starter:weapons-blazing",
@@ -434,7 +442,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "Applies half/full damage and unlocks a bonus-attack control after a Fantastic hit. The GM selects the new target.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "automated"
   },
   {
     "id": "starter:change-of-plans",
@@ -484,7 +493,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "Deducts Focus and adds an edge to an unresolved native roll with trouble, before rerolls. The GM confirms the ally and trigger.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "automated"
   },
   {
     "id": "starter:combat-support",
@@ -534,7 +544,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "Requires an active combat; deducts Focus and enforces once per combat. Heroic Actions checks use the fixed special die until the source’s next turn.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "automated"
   },
   {
     "id": "starter:determination",
@@ -554,7 +565,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "Heroic Actions checks omit demoralized trouble; Focus and concentration restrictions remain.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "contextual"
   },
   {
     "id": "starter:fearless",
@@ -574,7 +586,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "Select Fear-related check in Heroic Actions to include the edge.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "contextual"
   },
   {
     "id": "starter:connections-super-heroes-or-villains",
@@ -594,7 +607,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "Use an Ego noncombat check with a GM-set target number. The GM determines the contact’s help.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "contextual"
   },
   {
     "id": "starter:black-market-access",
@@ -614,7 +628,8 @@ export const STARTER = [
       "effects": []
     },
     "automation": "Narrative permission; the GM determines availability and prices.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "contextual"
   },
   {
     "id": "starter:heroic",
@@ -634,8 +649,12 @@ export const STARTER = [
       "effects": []
     },
     "automation": "The GM can reset Karma to rank with the Heroic Actions rest control. Cannot also be Villainous.",
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0",
+    "automationMode": "contextual"
   }
 ];
-export const ORIGINS = [{"id": "special-training", "name": "Special Training", "grants": ["starter:determination"], "source": "Core p. 56"}, {"id": "custom", "name": "Custom / other origin (manual)", "grants": []}];
-export const OCCUPATIONS = [{"id": "adventurer", "name": "Adventurer", "grants": ["starter:fearless", "starter:connections-super-heroes-or-villains", "starter:black-market-access"], "source": "Core p. 57"}, {"id": "custom", "name": "Custom / other occupation (manual)", "grants": []}];
+import {CORE,CORE_ORIGINS,CORE_OCCUPATIONS} from './core-content.js';
+export const CATALOGUE=[...STARTER,...CORE].sort((a,b)=>a.name.localeCompare(b.name));
+export const ORIGINS=[...CORE_ORIGINS,{id:'custom',name:'Custom / other origin (manual)',grants:[]}];
+export const OCCUPATIONS=[...CORE_OCCUPATIONS,{id:'custom',name:'Custom / other occupation (manual)',grants:[]}];
+export const POWER_SET_LABELS = {"basic": "Basic", "elementalControl": "Elemental Control", "illusion": "Illusion", "magic": "Magic", "martialArts": "Martial Arts", "meleeWeapons": "Melee Weapons", "omniversalTravel": "Omniversal Travel", "phasing": "Phasing", "plasticity": "Plasticity", "powerControl": "Power Control", "rangedWeapons": "Ranged Weapons", "resize": "Resize", "shieldBearer": "Shield Bearer", "spiderPowers": "Spider-Powers", "superSpeed": "Super-Speed", "superStrength": "Super-Strength", "tactics": "Tactics", "telekenesis": "Telekinesis", "telepathy": "Telepathy", "teleportation": "Teleportation", "weatherControl": "Weather Control"};

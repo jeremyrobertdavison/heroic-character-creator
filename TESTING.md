@@ -1,8 +1,8 @@
-# Validation status — 0.2.0
+# Validation status — 0.3.0
 
 ## Completed
 
-- 79 automated Node tests pass: rules, provenance, prerequisite checks, drafts/imports, escaped interface rendering, native field mapping, permissions, source conflicts, edit preservation, recovery snapshots and simulated partial failure.
+- 102 automated Node tests pass: rules, provenance, prerequisite checks, drafts/imports, escaped interface rendering, native field mapping, permissions, source conflicts, edit preservation, recovery snapshots and simulated partial failure.
 - JavaScript files pass syntax checks.
 - Native field mappings and Item types were compared with the supported system source and sample character export.
 - Release ZIP contents, entry points, manifest asset paths and version consistency are checked before delivery.
@@ -65,3 +65,16 @@ If a save reports an incomplete operation, inspect the recovery copy before retr
 - Test Fearless on a fear check; Determination at zero Focus; Connections Ego check; Heroic Karma after rest.
 - Reload the world with an unresolved attack and with active effects. Check persisted flags, native dice hydration, ownership and effect timing.
 - Test a player and GM in separate browsers, including a transferred GM role and a target on the canvas. Check that no effect is applied twice.
+
+
+## Version 0.3.0 live-world acceptance
+
+- Verify all 30 origin and 18 occupation choices appear; test Mutant, Magic: Sorcery, Atlantean and an occupation with Connections.
+- At insufficient rank, verify the Skrull package is rejected; at rank 3, verify its five required powers consume picks.
+- Add Extra Occupation, choose Lawyer, then remove the trait. Verify only its package-specific grants are removed.
+- Choose a specific Surprising Power; verify it waives only that power's rank/origin restriction and preserves prerequisites and pick costs.
+- Customize an elemental type, blunt/sharp weapon, God Heritage and a contact. Verify details save and survive content upgrades.
+- Search and filter the full catalogue. Add an option and verify filters remain selected.
+- Open Heroic Actions for a new reference-only power; verify Post rules to chat changes no Focus, Health or Active Effects.
+- Test an existing 0.2.0 character and an existing draft; verify original included powers still use their previous action workflows.
+- Attempt a 5-Focus action at 5 current Focus; verify it is rejected. At 6 Focus, verify it leaves 1.

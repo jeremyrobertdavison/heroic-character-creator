@@ -42,7 +42,7 @@ test('Adventurer grants two traits and a tag without budget charge',()=>{
 test('Special Training blocks unknown Basic suitability and prohibited sets',()=>{
  const b=newBuild();b.originId='special-training';addEntry(b,{id:'x',name:'Alien power',type:'power',sets:['telepathy']});
  assert.match(evaluate(b).errors.join(),/Special Training/);
- b.entries=[];addEntry(b,find('Inspiration'));assert.equal(evaluate(b).errors.length,0);
+ b.entries=[];setPackage(b,'originId','special-training',ORIGINS,STARTER);addEntry(b,find('Inspiration'));assert.equal(evaluate(b).errors.length,0);
 });
 test('unknown imported content remains unverified',()=>{
  const b=newBuild();addEntry(b,{id:'native:test',name:'Imported',type:'trait',sets:[]});assert.match(evaluate(b).warnings.join(),/Imported/);

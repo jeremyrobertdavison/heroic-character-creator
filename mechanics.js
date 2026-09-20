@@ -1,7 +1,7 @@
 import {ID,LEGACY_ID} from './rules.js';
-import {STARTER} from './catalogue.js';
-export const CONTENT_VERSION='0.2.0';
-export const definition=id=>STARTER.find(d=>d.id===id);
+import {CATALOGUE} from './catalogue.js';
+export const CONTENT_VERSION='0.3.0';
+export const definition=id=>CATALOGUE.find(d=>d.id===id);
 export function catalogueId(item,actor) {
   return item.flags?.[ID]?.catalogueId??item.flags?.[LEGACY_ID]?.catalogueId??
     actor?.flags?.[ID]?.build?.entries?.find(e=>e.itemId===item.id)?.definition.id;
@@ -14,11 +14,11 @@ export function integer(value,label,min=0,max=1000000) {
   const n=Number(value);if(!Number.isInteger(n)||n<min||n>max)throw Error(`${label} must be an integer from ${min} to ${max}.`);return n;
 }
 export function validatePower(actor,d) {
-  if(!d||d.type!=='power'||!owns(actor,d.id.slice(8)))throw Error('This character does not own that included power.');
+  if(!d||d.type!=='power'||!Array.from(actor.items??[]).some(i=>catalogueId(i,actor)===d.id))throw Error('This character does not own that included power.');
   if(actor.system.rank<d.minRank)throw Error(`Requires rank ${d.minRank}.`);
-  for(const id of d.requires??[])if(!owns(actor,id.slice(8)))throw Error(`Requires ${definition(id)?.name??id}.`);
+  for(const id of d.requires??[])if(!Array.from(actor.items??[]).some(i=>catalogueId(i,actor)===id))throw Error(`Requires ${definition(id)?.name??id}.`);
   const focus=actor.system.lifepool.focus.value;
-  if(d.item.system.cost>0&&(focus<=0||focus<d.item.system.cost))throw Error('Not enough Focus.');
+  if(d.item.system.cost>0&&(focus<=d.item.system.cost||d.item.system.cost>5*actor.system.rank))throw Error('Not enough Focus: keep at least 1 Focus and spend at most five times rank.');
   if(d.item.system.duration==='concentration'&&(focus<=0||actor.system.lifepool.health.value<=0))throw Error('Cannot maintain concentration at zero Health or Focus.');
   if(d.id==='starter:counterstrike-technique'&&!hasEffect(actor,'attack-stance'))throw Error('Attack Stance must be active.');
 }
@@ -49,7 +49,10 @@ export function timedExpired(flag,combat) {
 export function upgradeChanges(actor) {
   return Array.from(actor.items).flatMap(item=>{
     const d=definition(catalogueId(item,actor));if(!d)return [];
-    return [{_id:item.id,...Object.fromEntries(Object.entries(d.item.system).map(([k,v])=>[`system.${k}`,structuredClone(v)])),
+    const saved=actor.flags?.[ID]?.build?.entries?.find(e=>e.itemId===item.id)?.definition;
+    const system=structuredClone(d.item.system);
+    if(saved?.detail){const safe=String(saved.detail).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));system.description+=`<p><strong>Character choice:</strong> ${safe}</p>`;}
+    return [{_id:item.id,...Object.fromEntries(Object.entries(system).map(([k,v])=>[`system.${k}`,structuredClone(v)])),
       [`flags.${ID}.catalogueId`]:d.id,[`flags.${ID}.contentVersion`]:CONTENT_VERSION}];
   });
 }

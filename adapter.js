@@ -47,7 +47,8 @@ export function planChanges(build, actor=null) {
     item.flags={...item.flags,[ID]:{instance:e.instance,catalogueId:e.definition.id}};
     return {entry:e,item};
   });
-  return {update,remove,add};
+  const itemUpdates=build.entries.filter(e=>e.itemId&&e.choiceEdited).map(e=>({_id:e.itemId,name:e.definition.item.name,'system.description':e.definition.item.system.description}));
+  return {update,remove,add,itemUpdates};
 }
 function ensurePermission(actor, copy) {
   if(actor&&!actor.isOwner&&!game.user.isGM) throw new Error('You do not own this character.');
@@ -77,6 +78,7 @@ export async function commit(build, actor, baseline, {copy=false}={}) {
   if(!build.acknowledge) throw new Error('Acknowledge the manual rule review on the Review tab.');
   if(actor&&fingerprint(actor)!==baseline) throw new Error('This character changed after you opened the creator. Close and reopen it before saving; export your draft to retain your choices.');
   const plan=planChanges(build,actor), finalBuild=clone(build);
+  for(const e of finalBuild.entries)delete e.choiceEdited;
   let target=actor,backup=null;
   if(actor&&!copy) {
     backup=await backupActor(actor);
@@ -97,6 +99,7 @@ export async function commit(build, actor, baseline, {copy=false}={}) {
         item._id=foundry.utils.randomID();retained.push(item);
         finalBuild.entries.find(e=>e.instance===entry.instance).itemId=item._id;
       }
+      for(const edit of plan.itemUpdates){const index=retained.findIndex(i=>i._id===edit._id);if(index>=0)retained[index]=foundry.utils.mergeObject(retained[index],foundry.utils.expandObject(edit),{inplace:false});}
       data.items=retained;
       data.flags={...data.flags,[ID]:{build:finalBuild,coverage:'prototype-manual-review',savedAt:Date.now()}};
       target=await Actor.create(data,{keepEmbeddedIds:true,renderSheet:false});
@@ -108,6 +111,7 @@ export async function commit(build, actor, baseline, {copy=false}={}) {
         if(created.length!==plan.add.length) throw new Error('Not all selected Items were created.');
         created.forEach((item,i)=>{finalBuild.entries.find(e=>e.instance===plan.add[i].entry.instance).itemId=item.id;});
       }
+      if(plan.itemUpdates.length)await target.updateEmbeddedDocuments('Item',plan.itemUpdates);
       await target.update(plan.update);
       if(plan.remove.length) await target.deleteEmbeddedDocuments('Item',plan.remove);
       await target.setFlag(ID,'build',finalBuild);
